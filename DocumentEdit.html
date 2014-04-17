@@ -1,0 +1,194 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+	<link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="Bootstrap/css/bootstrap-theme-cerulean.min.css" rel="stylesheet" type="text/css">
+    <link href="jquery-ui/css/redmond/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css">
+    <link href="Css/theme-ui.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="Scripts/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="Bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="jquery-ui/js/jquery-ui-1.10.4.custom.min.js"></script>
+    <script type="text/javascript" src="Scripts/jQuery.Bootstrap.WebUI.js"></script>
+    <script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+    <script type="text/javascript">
+		var docContent;
+		var Id=0;
+		var jObject;
+	
+		$(document).ready(function() {
+			CKEDITOR.replace("Text_Content",{
+			customConfig:"config_doc.js",
+			height:300,
+			filebrowserUploadUrl:"./CKEditor_Upload_Image.aspx"
+			});
+			
+			$("#Dialog_Info").dialog({
+				autoOpen:false,
+				buttons:{
+					"确定":function(){
+						$(this).dialog("close");
+					}
+				}
+			});
+			
+			$("#Dialog_OperateWaitting").dialog({
+				autoOpen:false,
+				modal:true,
+				width:400,
+				closeText:"hide"
+			});
+		});
+		
+        function SwitchMenu(who) {
+            //$("#MenuList li").removeClass("active");
+            $("#MenuList #" + who).addClass("active");
+        }
+		
+		function AddnewDoc(){
+			if ($("#Text_Title").val()==""){
+				$("#Dialog_Info").ShowDialog("标题没有填写。");	
+				return;
+			}
+			docContent=CKEDITOR.instances.Text_Content.getData();
+			if (docContent==""){
+				$("#Dialog_Info").ShowDialog("文档客内容为空。");
+				return;
+			}
+			if ($("#List_Class").val()=="0"){
+				$("#Dialog_Info").ShowDialog("请选择文档的分类。");
+				return;
+			}
+			
+			if(confirm("你确定要添加这份文档吗？")==false) return;
+			$("#Dialog_OperateWaitting").dialog("open");
+			$.post("Ajax/DocumentOperate.aspx",{action:"ADDNEW",id:0,title:$("#Text_Title").val(),tags:$("#Text_Tags").val(),
+				cid:$("#List_Class").val(),content:docContent},function(data){
+				$("#Dialog_OperateWaitting").dialog("close");
+				jObject=$.parseJSON(data);
+				if (jObject.ResultCode==0){
+					$("#Dialog_Info").ShowDialog("文档内容添加成功。");
+				}else{
+					$("#Dialog_Info").ShowDialog(jObject.ResultMessage);	
+				}
+			});
+		}
+		
+		function UpdateDoc(){
+			if ($("#Text_Title").val()==""){
+				$("#Dialog_Info").ShowDialog("标题没有填写。");	
+				return;
+			}
+			docContent=CKEDITOR.instances.Text_Content.getData();
+			if (docContent==""){
+				$("#Dialog_Info").ShowDialog("文档客内容为空。");
+				return;
+			}
+			if ($("#List_Class").val()=="0"){
+				$("#Dialog_Info").ShowDialog("请选择文档的分类。");
+				return;
+			}
+			
+			if(confirm("你确定要更新这份文档吗？")==false) return;
+			$("#Dialog_OperateWaitting").dialog("open");
+			$.post("Ajax/DocumentOperate.aspx",{action:"UPDATE",id:Id,title:$("#Text_Title").val(),tags:$("#Text_Tags").val(),
+				cid:$("#List_Class").val(),content:docContent},function(data){
+				$("#Dialog_OperateWaitting").dialog("close");
+				jObject=$.parseJSON(data);
+				if (jObject.ResultCode==0){
+					$("#Dialog_Info").ShowDialog("文档内容更新成功。");
+				}else{
+					$("#Dialog_Info").ShowDialog(jObject.ResultMessage);	
+				}
+			});
+		}
+		
+		function DeleteDoc(){
+		if (confirm("你确定要删除这份文档吗？")==false) return;
+		$("#btn_update").addClass("disabled");
+		$("#btn_delete").addClass("disibled");	
+		$.post("Ajax/BlogOperate.aspx",{action:"DELETE",id:Id},function(data){
+			jObject=$.parseJSON(data);
+			if (jObject.ResultCode==0){
+				$("#Dialog_Info").ShowDialog("文档删除成功。");
+			}else{
+				$("#Dialog_Info").ShowDialog(jObject.ResultMessage);
+				$("#btn_update").removeClass("disabled");
+				$("#btn_delete").removeClass("disibled");	
+			}
+		});
+	}
+
+    </script>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+      <a class="navbar-brand" href="Default.aspx">爱游戏&nbsp;CP支撑平台</a> </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="navbar-collapse-1">
+      <ul class="nav navbar-nav" id="MenuList">
+          <li id="MenuDefault"><a href="Default.aspx">首页</a></li>
+          <li id="MenuDocument"><a href="#" class="dropdown-toggle" data-toggle="dropdown">文档中心&nbsp;<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li><a href="Default_TurnRun.aspx">单机SDK开发文档</a></li>
+                <li><a href="Default_TurnRun.aspx">网游SDK开发文档</a></li>
+                <li><a href="DocumentList.aspx">所有文档</a></li>
+            </ul>
+        </li>
+        <li id="MenuHelp"><a href="HelpList.aspx">帮助中心</a></li>
+        <li id="MenuUser"><a href="UserList.aspx">用户管理</a></li>
+        <li id="MenuCP"><a href="CPList.aspx">CP管理</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right" style="margin-right:10px;">
+        <li><a href="Logout.aspx">&nbsp;退出</a></li>
+      </ul>
+    </div>
+</nav>
+<div class="MainContainer caption text-right" style="padding-right:30px;"> <a href="javascript:void(0);" onClick="window.history.back();" class="btn btn-primary">返回</a> </div>
+<div class="container">
+    <div class="form-group" id="Gp_Title">
+    	<label for="Text_Title">文档标题</label>
+        <input id="Text_Title" type="text" class="form-control" onBlur="$(this).CheckIsEmpty('Gp_Title');">
+    </div>
+    <div class="row">
+    	<div class="col-md-6">
+        	<div class="form-group">
+            	<label for="Text_Tags">标签</label>
+                <input id="Text_Tags" type="text" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-6">
+        	<div class="form-group">
+            	<label for="Text_Date">所属分类</label>
+                <select id="List_Class" class="form-control">
+                	<option value="0">请选择文档所属分类</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+    	<label for="Text_Link">重定向链接</label>
+        <input id="Text_Link" type="text" class="form-control">
+    </div>
+    <div class="form-group">
+        <label for="Text_Content">文档内容</label>
+        <textarea id="Text_Content" rows="5" class="form-control"></textarea>
+    </div>
+    <div class="form-group text-center">
+    	<input id="btn_addnew" type="button" value="添加" class="btn btn-primary" onClick="AddnewDoc();">
+        <input id="btn_update" type="button" value="更新" class="btn btn-success" onClick="UpdateDoc();">
+        <input id="btn_delete" type="button" value="删除" class="btn btn-danger" onClick="DeleteDoc();">
+    </div>
+</div>
+<div id="Dialog_Info" title="信息"></div>
+<div id="Dialog_OperateWaitting" title="数据传递中...">
+	<div class="caption text-center" id="Dialog_UploadWaitting_Text">正在传递数据</div>
+	<div class="progress progress-striped active">
+      <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+    </div>
+</div>
+</body>
+</html>

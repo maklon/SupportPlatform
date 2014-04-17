@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CP支撑平台</title>
+<link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="Bootstrap/css/bootstrap-theme-cerulean.min.css" rel="stylesheet" type="text/css">
+<link href="jquery-ui/css/redmond/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css">
+<link href="Css/theme-ui.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="Scripts/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="Bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="jquery-ui/js/jquery-ui-1.10.4.custom.min.js"></script>
+<script type="text/javascript" src="Scripts/jQuery.Bootstrap.WebUI.js"></script>
+<script type="text/javascript">
+	function Logining(){
+		if ($("#uname").val()=="" || $("#pwd").val()==""){
+			$("#LoginDialog").ShowDialog("用户名或密码没有填写。");
+			return;
+		}
+		SwitchOperate("Logining");
+		$("#ProgressValue").SetProgressValue(30);
+		$.post("Ajax/Logining.aspx",{uname:$("#uname").val(),pwd:$("#pwd").val()},function(data){
+			if (data=="0"){
+				$("#ProgressValue").SetProgressValue(100);
+				window.location="Default.aspx";
+			}else{
+				$("#ProgressValue").SetProgressValue(90);
+				$("#LoginDialog").ShowDialog(data);
+				SwitchOperate("Input");
+			}
+		});
+	}
+	
+	function SwitchOperate(who){
+		if (who=="Logining"){
+			$("#area_btn").hide();
+			$("#area_waiting").show();
+		}else if (who=="Input"){
+			$("#area_btn").show();
+			$("#area_waiting").hide();
+		}
+	}
+	
+	$(document).ready(function() {
+        $("#LoginDialog").dialog({
+			autoOpen:false,
+			buttons:{
+				Ok:function(){
+					$(this).dialog("close");
+				}
+			}
+		});
+    });
+</script>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	<div class="navbar-header"><a class="navbar-brand" href="Default.aspx">爱游戏&nbsp;CP支撑平台</a></div>
+</nav>
+<div class="container">
+	<form runat="server" style="width:500px; margin:0px auto;">
+    	<h2>用户登录</h2>
+        <div class="input-group">
+        	<span class="input-group-addon">登录账号：</span>
+            <input type="text" class="form-control" placeholder="登录用户名" id="uname" />
+        </div>
+        <div class="input-group" style="margin-top:10px; margin-bottom:10px;">
+        	<span class="input-group-addon">登录密码：</span>
+            <input type="password" class="form-control" placeholder="登录密码" id="pwd" />
+        </div>
+        <div style="text-align:center;" id="area_btn">
+        	<button class="btn btn-primary" type="button" onClick="Logining();">登录</button>
+        </div>
+        <div class="progress progress-striped active" style="display:none;" id="area_waiting">
+        	<div id="ProgressValue" class="progress-bar" role="progressbar" aria-value="0" aria-valuemin="0" aria-valuemax="100"></div>    
+        </div>
+    </form>
+</div>
+
+<div id="LoginDialog" title="登录"></div>
+
+</body>
+</html>
