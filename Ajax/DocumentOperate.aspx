@@ -11,7 +11,7 @@
     string JsonResult;
     
     void Page_Load(object Sender, EventArgs e) {
-        if (Request["id"] == null) {
+        if (Request.Form["id"] == null) {
             Id = 0;
         } else {
             Id = Convert.ToInt32(Request["id"]);
@@ -19,7 +19,7 @@
 
         ResultInfo rInfo = new ResultInfo();
 
-        Action = Request["action"];
+        Action = Request.Form["action"];
         if (Action == "DELETE") {
             SQL = "DELETE FROM DocumentList WHERE Id=" + Id;
             try {
@@ -29,10 +29,10 @@
                 rInfo.ResultMessage = ex.Message;
             }
         } else {
-            Title = Request["title"];
-            Content = Server.UrlDecode(Request["content"]);
-            ClassId = Request["cid"];
-            LinkUrl=Request["link"];
+            Title = Request.Form["title"];
+            Content = Server.UrlDecode(Request.Form["content"]);
+            ClassId = Request.Form["cid"];
+            LinkUrl=Request.Form["link"];
             if (string.IsNullOrEmpty(Title)) {
                 rInfo.ResultCode = 1;
                 rInfo.ResultMessage = "标题为空。";

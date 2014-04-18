@@ -22,6 +22,7 @@
             Session["UserId"] = Sr.GetInt32(0);
             Session["UserName"] = Sr.GetString(1);
             Session["UserRole"] = Sr.GetString(3);
+            Session["CPId"] = Sr.GetInt32(4);
             Sr.Close();
             Response.Write("0");
         }

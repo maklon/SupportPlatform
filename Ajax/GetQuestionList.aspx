@@ -9,11 +9,25 @@
     SqlDataReader Sr;
     DataTable Dt;
     string SQL;
-    int PageId, ClassId, TotalDataCount, TotalPageCount, StartId, EndId, StartPageId, EndPageId;
+    int PageId, ClassId, PublicStatus,TotalDataCount, TotalPageCount, StartId, EndId, StartPageId, EndPageId;
     int PageSize = 20;
     int PageSpan = 4;
+    bool IsAdmin, IsManager;
 
     protected void Page_Load(object sender, EventArgs e) {
+        if (Session["Role"] == null) {
+            Response.Write("登录已超时，请重新登录。");
+            Response.End();
+        } else {
+            IsAdmin = false;
+            IsManager = false;
+            if (Session["Role"].ToString() == "system") {
+                IsAdmin = true;
+            }
+            if (Session["Role"].ToString() == "manager") {
+                IsManager = true;
+            }
+        }
         if (Request.QueryString["page"] == null) {
             PageId = 1;
         } else {
@@ -24,10 +38,21 @@
         } else {
             ClassId = Convert.ToInt32(Request.QueryString["cid"]);
         }
+        if (Request.QueryString["sid"] == null) {
+            PublicStatus = 0;
+        } else {
+            PublicStatus = Convert.ToInt32(Request.QueryString["sid"]);
+        }
 
-        SQL = "SELECT TOP " + (PageId * PageSize) + " DocumentList.Id,DocumentList.Title,DocumentList.AddTime,ClassList.ClassName "
-            + "FROM DocumentList INNER JOIN ClassList ON DocumentList.ClassId=ClassList.Id";
-        if (ClassId > 0) SQL += " WHERE DocumentList.ClassId=" + ClassId;
+        SQL = "SELECT TOP " + (PageId * PageSize) + "QuestionList.Title,QuestionList.Dot,QuestionList.Re,QuestionList.VisableLevel,"
+            + "QuestionList.AddTime,QuestionList.LastReTime,CPInfo.CPNameShort FROM QuestionList INNER JOIN CPInfo ON QuestionList.AddUserCPId="
+            + "CPInfo.Id WHERE ParentId=0";
+        if (IsAdmin || IsManager) {
+            SQL += " AND QuestionList.VisableLevel>0";
+        } else {
+            SQL += " AND (QuestionList.VisableLevel=10 OR (QuestionList.VisableLevel=1 AND QuestionList.AddUserCPId=)" + Session["CPId"].ToString() + ")";
+        }
+        if (ClassId > 0) SQL += " AND DocumentList.ClassId=" + ClassId;
         SQL += " ORDER BY DocumentList.OrderId DESC,DocumentList.Id DESC";
         MZ.CreateDataTable(SQL, "DL");
         Dt = MZ.Tables["DL"];

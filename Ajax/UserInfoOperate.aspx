@@ -6,7 +6,7 @@
 <script runat="server">
     DB MZ = new DB(ConfigurationManager.ConnectionStrings["DBConn"].ConnectionString);
     SqlDataReader Sr;
-    string Title, Content, ClassId, LinkUrl, Action, SQL;
+    string UserName, Password, CPId, Role, Action, SQL;
     int Id;
     string JsonResult;
     
@@ -21,7 +21,7 @@
 
         Action = Request["action"];
         if (Action == "DELETE") {
-            SQL = "DELETE FROM DocumentList WHERE Id=" + Id;
+            SQL = "DELETE FROM UserInfo WHERE Id=" + Id;
             try {
                 MZ.ExecuteSQL(SQL);
             } catch (Exception ex) {
@@ -29,40 +29,33 @@
                 rInfo.ResultMessage = ex.Message;
             }
         } else {
-            Title = Request["title"];
-            Content = Server.UrlDecode(Request["content"]);
-            ClassId = Request["cid"];
-            LinkUrl=Request["link"];
-            if (string.IsNullOrEmpty(Title)) {
+            UserName = Request["uname"];
+            Password = Request["pwd"];
+            CPId = Request["cpid"];
+            Role=Request["role"];
+            if (string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(Password)) {
                 rInfo.ResultCode = 1;
-                rInfo.ResultMessage = "标题为空。";
+                rInfo.ResultMessage = "用户名或密码为空。";
                 JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
                 Response.Write(JsonResult);
                 Response.End();
             }
-            if (string.IsNullOrEmpty(Content) && string.IsNullOrEmpty(LinkUrl)) {
+            if (string.IsNullOrEmpty(Role) || string.IsNullOrEmpty(CPId)) {
                 rInfo.ResultCode = 1;
-                rInfo.ResultMessage = "内容与重定向链接不能同时为空。";
+                rInfo.ResultMessage = "用户角色与隶属类别为空。";
                 JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
                 Response.Write(JsonResult);
                 Response.End();
             }
-            if (string.IsNullOrEmpty(ClassId) || !General.IsMatch(ClassId, "^\\d+$") || ClassId == "0") {
-                rInfo.ResultCode = 1;
-                rInfo.ResultMessage = "请选择文档的分类。";
-                JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
-                Response.Write(JsonResult);
-                Response.End();
-            }
-            DB.SQLFiltrate(ref Title);
-            DB.SQLFiltrate(ref Content);
-            DB.SQLFiltrate(ref LinkUrl);
+            DB.SQLFiltrate(ref UserName);
+            DB.SQLFiltrate(ref Password);
+            DB.SQLFiltrate(ref Role);
             if (Action == "ADDNEW") {
-                SQL = "INSERT INTO DocumentList (ClassId,Title,ContentText,LinkUrl,AddUserId) VALUES ("+ClassId+",'"
-                    + Title + "','" + Content + "','" + LinkUrl + "'," + Session["UserId"].ToString() + ")";
+                SQL = "INSERT INTO UserInfo (UserName,Password,Role,CPId) VALUES ('"+UserName+"','"
+                    + Password + "','" + Role + "'," + CPId + ")";
             } else if (Action == "UPDATE") {
-                SQL = "UPDATE DocumentList SET Title='" + Title + "',ContentText='" + Content + "',LinkUrl='" + LinkUrl + "',"
-                    + "LastEditUserId=" + Session["UserId"].ToString() + " WHERE Id=" + Id;
+                SQL = "UPDATE UserInfo SET UserName='" + UserName + "',Password='" + Password + "',Role='" + Role + "',"
+                    + "CPId=" + CPId + " WHERE Id=" + Id;
             } else {
                 rInfo.ResultCode = 1;
                 rInfo.ResultMessage = "不能识别的指令。";

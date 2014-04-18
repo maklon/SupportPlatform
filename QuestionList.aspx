@@ -1,15 +1,16 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" %>
-
 <script runat="server">
-
+    protected void Page_Load(object Sender, EventArgs e) {
+        if (Session["UserId"] == null) Response.Redirect("Login.html", true);
+    }
 </script>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="PageHead" runat="Server">
+<asp:Content ID="Content1" ContentPlaceHolderID="PageHead" Runat="Server">
     <script type="text/javascript">
-        var Role = "";
+        var ClassId = 0;
 
         $(document).ready(function () {
-            SwitchMenu("MenuUser");
+            SwitchMenu("MenuDocument");
 
             $("#Dialog_OperateWaitting").dialog({
                 autoOpen: false,
@@ -23,26 +24,15 @@
 
         function GetData(pageId) {
             $("#Dialog_OperateWaitting").dialog("open");
-            $.get("Ajax/GetUserInfoList.aspx", { role: Role, page: pageId }, function (data) {
+            $.get("Ajax/GetDocumentList.aspx", { cid: ClassId, page: pageId }, function (data) {
                 $("#Dialog_OperateWaitting").dialog("close");
                 $("#DataArea").html(data);
             });
         }
-
-        function SwitchRole(r) {
-            Role = r;
-            GetData(1);
-        }
-
     </script>
 </asp:Content>
-<asp:Content ID="Content2" ContentPlaceHolderID="PageContent" runat="Server">
-    <div class="MainContainer caption text-right" style="padding-right: 30px;">
-        <a href="javascript:void(0);" onclick="SwitchRole('');" class="label label-info">全部用户</a>&nbsp;
-        <a href="javascript:void(0);" onclick="SwitchRole('system');" class="label label-info">系统管理员</a>&nbsp;
-        <a href="javascript:void(0);" onclick="SwitchRole('manager');" class="label label-info">平台管理员</a>&nbsp;
-        <a href="javascript:void(0);" onclick="SwitchRole('user');" class="label label-info">平台用户</a>&nbsp;
-        <a href="UserInfoEdit.aspx" class="btn btn-primary">添加新用户</a></div>
+<asp:Content ID="Content2" ContentPlaceHolderID="PageContent" Runat="Server">
+    <div class="MainContainer caption text-right" style="padding-right: 30px;"><a href="DocumentEdit.aspx" class="btn btn-primary">添加新文档</a></div>
     <div class="container" id="DataArea">
         
     </div>

@@ -3,15 +3,18 @@
 <%@ Import Namespace="System.Data.SqlClient" %>
 <%@ Import Namespace="Newtonsoft.Json" %>
 <%@ Import Namespace="System.Collections.Generic" %>
+
 <%@ Page Language="C#" %>
+
 <script runat="server">
     DS MZ = new DS(ConfigurationManager.ConnectionStrings["DBConn"].ConnectionString);
     SqlDataReader Sr;
     DataTable Dt;
     string SQL;
-    int PageId, ClassId, TotalDataCount, TotalPageCount, StartId, EndId, StartPageId, EndPageId;
+    int PageId, TotalDataCount, TotalPageCount, StartId, EndId, StartPageId, EndPageId;
     int PageSize = 20;
     int PageSpan = 4;
+    string Role = "";
 
     protected void Page_Load(object sender, EventArgs e) {
         if (Request.QueryString["page"] == null) {
@@ -19,22 +22,22 @@
         } else {
             PageId = Convert.ToInt32(Request.QueryString["page"]);
         }
-        if (Request.QueryString["cid"] == null) {
-            ClassId = 0;
+        Role = Request.QueryString["role"];
+        if (Role == null) {
+            Role = "";
         } else {
-            ClassId = Convert.ToInt32(Request.QueryString["cid"]);
+            DB.SQLFiltrate(ref Role);
         }
 
-        SQL = "SELECT TOP " + (PageId * PageSize) + " DocumentList.Id,DocumentList.Title,DocumentList.AddTime,ClassList.ClassName "
-            + "FROM DocumentList INNER JOIN ClassList ON DocumentList.ClassId=ClassList.Id";
-        if (ClassId > 0) SQL += " WHERE DocumentList.ClassId=" + ClassId;
-        SQL += " ORDER BY DocumentList.OrderId DESC,DocumentList.Id DESC";
-        MZ.CreateDataTable(SQL, "DL");
-        Dt = MZ.Tables["DL"];
+        SQL = "SELECT TOP " + (PageId * PageSize) + " UserInfo.Id,UserInfo.UserName,UserInfo.Role,CPInfo.CPName "
+            + "FROM UserInfo INNER JOIN CPInfo ON UserInfo.CPId=CPInfo.Id";
+        if (Role != "") SQL += " WHERE UserInfo.Role='" + Role + "'";
+        MZ.CreateDataTable(SQL, "UL");
+        Dt = MZ.Tables["UL"];
         StartId = (PageId - 1) * PageSize;
         EndId = PageId * PageSize;
-        SQL = "SELECT COUNT(*) FROM DocumentList";
-        if (ClassId > 0) SQL += " WHERE ClassId=" + ClassId;
+        SQL = "SELECT COUNT(*) FROM UserInfo";
+        if (Role != "") SQL += " WHERE Role='" + Role + "'";
         Sr = MZ.GetReader(SQL);
         if (Sr.Read()) {
             TotalDataCount = Sr.GetInt32(0);
@@ -58,14 +61,26 @@
         Dt = null;
     }
 
+    protected string GetRoleDisplayName(string role) {
+        if (role == "system") {
+            return "系统管理员";
+        } else if (role == "manager") {
+            return "平台管理员";
+        } else if (role == "user") {
+            return "平台用户";
+        } else {
+            return role;
+        }
+    }
+
 </script>
 <table class="table table-hover table-striped">
     <thead style="font-weight: bold; font-size: 16px;">
         <tr>
             <td style="width: 10%">#</td>
-            <td style="width: 40%">标题</td>
-            <td style="width: 20%">分类</td>
-            <td style="width: 20%">发布时间</td>
+            <td style="width: 30%">用户名</td>
+            <td style="width: 20%">角色</td>
+            <td style="width: 30%">所属CP</td>
             <td style="width: 10%">操作</td>
         </tr>
     </thead>
@@ -73,10 +88,10 @@
         <%for (int i = StartId; i < EndId && i < Dt.Rows.Count; i++) { %>
         <tr>
             <td><%=Dt.Rows[i][0] %></td>
-            <td><%=Dt.Rows[i]["Title"] %></td>
-            <td><%=Dt.Rows[i]["ClassName"] %></td>
-            <td><%=((DateTime)(Dt.Rows[i]["AddTime"])).ToString("yyyy年MM月dd日") %></td>
-            <td><a href="DocumentEdit.aspx?id=<%=Dt.Rows[i][0] %>" class="text-primary">编辑</a></td>
+            <td><%=Dt.Rows[i]["UserName"] %></td>
+            <td><%=GetRoleDisplayName(Dt.Rows[i]["Role"].ToString()) %></td>
+            <td><%=Dt.Rows[i]["CPName"] %></td>
+            <td><a href="UserInfoEdit.aspx?id=<%=Dt.Rows[i][0] %>" class="text-primary">编辑</a></td>
         </tr>
         <%} %>
     </tbody>
