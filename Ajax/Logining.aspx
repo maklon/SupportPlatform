@@ -16,13 +16,15 @@
         }
         DB.SQLFiltrate(ref UserName);
         DB.SQLFiltrate(ref Password);
-        SQL = "SELECT * FROM UserInfo WHERE UserName='" + UserName + "' AND Password='" + Password + "'";
+        SQL = "SELECT UserInfo.*,CPInfo.CPNameShort FROM UserInfo INNER JOIN CPInfo ON UserInfo.CPId=CPInfo.Id "
+            +"WHERE UserInfo.UserName='" + UserName + "' AND UserInfo.Password='" + Password + "'";
         Sr = MZ.GetReader(SQL);
         if (Sr.Read()) {
             Session["UserId"] = Sr.GetInt32(0);
             Session["UserName"] = Sr.GetString(1);
             Session["UserRole"] = Sr.GetString(3);
             Session["CPId"] = Sr.GetInt32(4);
+            Session["CPNameShort"] = Sr.GetString(5);
             Sr.Close();
             Response.Write("0");
         }

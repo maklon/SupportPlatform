@@ -17,16 +17,16 @@
     bool IsAdmin, IsManager;
 
     protected void Page_Load(object sender, EventArgs e) {
-        if (Session["Role"] == null) {
+        if (Session["UserRole"] == null) {
             Response.Write("登录已超时，请重新登录。");
             Response.End();
         } else {
             IsAdmin = false;
             IsManager = false;
-            if (Session["Role"].ToString() == "system") {
+            if (Session["UserRole"].ToString() == "system") {
                 IsAdmin = true;
             }
-            if (Session["Role"].ToString() == "manager") {
+            if (Session["UserRole"].ToString() == "manager") {
                 IsManager = true;
             }
         }
@@ -46,21 +46,21 @@
             PublicStatus = Convert.ToInt32(Request.QueryString["sid"]);
         }
 
-        SQL = "SELECT TOP " + (PageId * PageSize) + "QuestionList.Title,ClassList.ClassName,QuestionList.Dot,QuestionList.Re,QuestionList.VisableLevel,"
-            + "QuestionList.AddTime,QuestionList.Status,CPInfo.CPNameShort FROM QuestionList INNER JOIN CPInfo ON QuestionList.AddUserCPId="
+        SQL = "SELECT TOP " + (PageId * PageSize) + " QuestionList.Title,ClassList.ClassName,QuestionList.Dot,QuestionList.Re,QuestionList.VisableLevel,"
+            + "QuestionList.Status,QuestionList.AddTime,QuestionList.LastReTime,CPInfo.CPNameShort FROM QuestionList INNER JOIN CPInfo ON QuestionList.AddUserCPId="
             + "CPInfo.Id INNER JOIN ClassList ON QuestionList.ClassId=ClassList.Id WHERE QuestionList.ParentId=0 AND QuestionList.Status>0";
         if (IsAdmin || IsManager) {
             SQL += " AND QuestionList.VisableLevel>0";
         } else {
-            SQL += " AND (QuestionList.VisableLevel=10 OR (QuestionList.VisableLevel=1 AND QuestionList.AddUserCPId=)" + Session["CPId"].ToString() + ")";
+            SQL += " AND (QuestionList.VisableLevel=10 OR (QuestionList.VisableLevel=5 AND QuestionList.AddUserCPId=" + Session["CPId"].ToString() + ")";
         }
         if (ClassId > 0) SQL += " AND DocumentList.ClassId=" + ClassId;
-        SQL += " ORDER BY DocumentList.OrderId DESC,DocumentList.Id DESC";
+        SQL += " ORDER BY QuestionList.OrderId DESC,QuestionList.Id DESC";
         MZ.CreateDataTable(SQL, "DL");
         Dt = MZ.Tables["DL"];
         StartId = (PageId - 1) * PageSize;
         EndId = PageId * PageSize;
-        SQL = "SELECT COUNT(*) FROM Question WHERE ParentId=0 AND Status>0";
+        SQL = "SELECT COUNT(*) FROM QuestionList WHERE ParentId=0 AND Status>0";
         if (ClassId > 0) SQL += " WHERE ClassId=" + ClassId;
         Sr = MZ.GetReader(SQL);
         if (Sr.Read()) {
@@ -85,14 +85,49 @@
         Dt = null;
     }
 
-    protected String GetStatusDisplayName(int status) {
+    protected string GetStatusDisplayName(int status) {
         switch (status) {
             case 1:
-                return "";
+                return "<span class=\"label label-warning\">等待回复</span>";
             case 2:
-                return "";
+                return "<span class=\"label label-danger\">锁定</span>";
+            case 3:
+                return "<span class=\"label label-success\">完结</span>";
             default:
-                return "";
+                return "<span class=\"label label-default\">未知</span>";
+        }
+    }
+
+    protected string GetVisableLevelDisplayName(int visable) {
+        switch (visable) {
+            case 1:
+                return "<span style=\"color:#d9534f; font-weight:bold;\">仅自己可见</span>";
+            case 5:
+                return "<span style=\"color:#5bc0de; font-weight:bold;\">仅本CP可见</span>";
+            case 10:
+                return "<span style=\"color:#5cb85c; font-weight:bold;\">全部可见</span>";
+            default:
+                return "<span style=\"color:#999999; font-weight:bold;\">未知</span>";
+        }
+    }
+
+    protected string GetDateTimeSpanDisplayName(DateTime dt) {
+        TimeSpan ts;
+        ts = DateTime.Now - dt;
+        if (ts.TotalMinutes < 6) {
+            return "刚刚";
+        } else if (ts.TotalMinutes < 60) {
+            return ts.TotalMinutes + "分钟前";
+        } else if (ts.TotalHours < 24) {
+            return ts.TotalHours + "小时前";
+        } else if (ts.TotalDays < 7) {
+            return ts.TotalDays + "天以前";
+        } else if (ts.TotalDays/7<4) {
+            return ts.TotalDays/7+"周以上";
+        }else if (ts.TotalDays<60){
+            return "1个月以上";    
+        } else {
+            return "很久了";
         }
     }
 
@@ -101,14 +136,15 @@
     <thead style="font-weight: bold; font-size: 16px;">
         <tr>
             <td style="width: 5%">#</td>
-            <td style="width: 36%">标题</td>
-            <td style="width: 15%">分类</td>
+            <td style="width: 30%">标题</td>
+            <td style="width: 10%">分类</td>
             <td style="width: 5%">点击</td>
             <td style="width: 5%">回复</td>
-            <td style="width: 8%">发起CP</td>
+            <td style="width: 9%">发起CP</td>
             <td style="width: 8%">可见级别</td>
             <td style="width: 8%">状态</td>
             <td style="width: 10%">发起时间</td>
+            <td style="width: 10%">回复时间</td>
         </tr>
     </thead>
     <tbody>
@@ -120,9 +156,10 @@
             <td><%=Dt.Rows[i]["Dot"] %></td>
             <td><%=Dt.Rows[i]["Re"] %></td>
             <td><%=Dt.Rows[i]["CPNameShort"] %></td>
-            <td><%=Dt.Rows[i]["CPNameShort"] %></td>
-            <td><%=Dt.Rows[i]["CPNameShort"] %></td>
-            <td><%=((DateTime)(Dt.Rows[i]["AddTime"])).ToString("yyyy年MM月dd日") %></td>
+            <td><%=GetVisableLevelDisplayName((int)Dt.Rows[i]["VisableLevel"]) %></td>
+            <td><%=GetVisableLevelDisplayName((int)Dt.Rows[i]["Status"]) %></td>
+            <td><%=GetDateTimeSpanDisplayName((DateTime)(Dt.Rows[i]["AddTime"])) %></td>
+            <td><%=GetDateTimeSpanDisplayName((DateTime)(Dt.Rows[i]["LastReTime"])) %></td>
         </tr>
         <%} %>
     </tbody>

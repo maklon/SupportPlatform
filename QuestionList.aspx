@@ -24,7 +24,7 @@
 
         function GetData(pageId) {
             $("#Dialog_OperateWaitting").dialog("open");
-            $.get("Ajax/GetDocumentList.aspx", { cid: ClassId, page: pageId }, function (data) {
+            $.get("Ajax/GetQuestionList.aspx", { cid: ClassId, page: pageId }, function (data) {
                 $("#Dialog_OperateWaitting").dialog("close");
                 $("#DataArea").html(data);
             });
@@ -32,7 +32,7 @@
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="PageContent" Runat="Server">
-    <div class="MainContainer caption text-right" style="padding-right: 30px;"><a href="DocumentEdit.aspx" class="btn btn-primary">添加新文档</a></div>
+    <div class="MainContainer caption text-right" style="padding-right: 30px;"><a href="DocumentEdit.aspx" class="btn btn-primary">开始咨询</a></div>
     <div class="container" id="DataArea">
         
     </div>

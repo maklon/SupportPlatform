@@ -50,7 +50,7 @@
                         <li><a href="DocumentList.aspx">所有文档</a></li>
                     </ul>
                 </li>
-                <li id="MenuHelp"><a href="HelpList.aspx">帮助中心</a></li>
+                <li id="MenuHelp"><a href="QuestionList.aspx">咨询中心</a></li>
                 <%if (IsAdmin) { %>
                 <li id="MenuClass"><a href="ClassList.aspx">分类管理</a></li>
                 <li id="MenuUser"><a href="UserList.aspx">用户管理</a></li>
