@@ -3,13 +3,15 @@
 <%@ Import Namespace="System.Data.SqlClient" %>
 <%@ Import Namespace="Newtonsoft.Json" %>
 <%@ Import Namespace="System.Collections.Generic" %>
+
 <%@ Page Language="C#" %>
+
 <script runat="server">
     DS MZ = new DS(ConfigurationManager.ConnectionStrings["DBConn"].ConnectionString);
     SqlDataReader Sr;
     DataTable Dt;
     string SQL;
-    int PageId, ClassId, PublicStatus,TotalDataCount, TotalPageCount, StartId, EndId, StartPageId, EndPageId;
+    int PageId, ClassId, PublicStatus, TotalDataCount, TotalPageCount, StartId, EndId, StartPageId, EndPageId;
     int PageSize = 20;
     int PageSpan = 4;
     bool IsAdmin, IsManager;
@@ -44,9 +46,9 @@
             PublicStatus = Convert.ToInt32(Request.QueryString["sid"]);
         }
 
-        SQL = "SELECT TOP " + (PageId * PageSize) + "QuestionList.Title,QuestionList.Dot,QuestionList.Re,QuestionList.VisableLevel,"
-            + "QuestionList.AddTime,QuestionList.LastReTime,CPInfo.CPNameShort FROM QuestionList INNER JOIN CPInfo ON QuestionList.AddUserCPId="
-            + "CPInfo.Id WHERE ParentId=0";
+        SQL = "SELECT TOP " + (PageId * PageSize) + "QuestionList.Title,ClassList.ClassName,QuestionList.Dot,QuestionList.Re,QuestionList.VisableLevel,"
+            + "QuestionList.AddTime,QuestionList.Status,CPInfo.CPNameShort FROM QuestionList INNER JOIN CPInfo ON QuestionList.AddUserCPId="
+            + "CPInfo.Id INNER JOIN ClassList ON QuestionList.ClassId=ClassList.Id WHERE QuestionList.ParentId=0 AND QuestionList.Status>0";
         if (IsAdmin || IsManager) {
             SQL += " AND QuestionList.VisableLevel>0";
         } else {
@@ -58,7 +60,7 @@
         Dt = MZ.Tables["DL"];
         StartId = (PageId - 1) * PageSize;
         EndId = PageId * PageSize;
-        SQL = "SELECT COUNT(*) FROM DocumentList";
+        SQL = "SELECT COUNT(*) FROM Question WHERE ParentId=0 AND Status>0";
         if (ClassId > 0) SQL += " WHERE ClassId=" + ClassId;
         Sr = MZ.GetReader(SQL);
         if (Sr.Read()) {
@@ -83,15 +85,30 @@
         Dt = null;
     }
 
+    protected String GetStatusDisplayName(int status) {
+        switch (status) {
+            case 1:
+                return "";
+            case 2:
+                return "";
+            default:
+                return "";
+        }
+    }
+
 </script>
 <table class="table table-hover table-striped">
     <thead style="font-weight: bold; font-size: 16px;">
         <tr>
-            <td style="width: 10%">#</td>
-            <td style="width: 40%">标题</td>
-            <td style="width: 20%">分类</td>
-            <td style="width: 20%">发布时间</td>
-            <td style="width: 10%">操作</td>
+            <td style="width: 5%">#</td>
+            <td style="width: 36%">标题</td>
+            <td style="width: 15%">分类</td>
+            <td style="width: 5%">点击</td>
+            <td style="width: 5%">回复</td>
+            <td style="width: 8%">发起CP</td>
+            <td style="width: 8%">可见级别</td>
+            <td style="width: 8%">状态</td>
+            <td style="width: 10%">发起时间</td>
         </tr>
     </thead>
     <tbody>
@@ -100,8 +117,12 @@
             <td><%=Dt.Rows[i][0] %></td>
             <td><%=Dt.Rows[i]["Title"] %></td>
             <td><%=Dt.Rows[i]["ClassName"] %></td>
+            <td><%=Dt.Rows[i]["Dot"] %></td>
+            <td><%=Dt.Rows[i]["Re"] %></td>
+            <td><%=Dt.Rows[i]["CPNameShort"] %></td>
+            <td><%=Dt.Rows[i]["CPNameShort"] %></td>
+            <td><%=Dt.Rows[i]["CPNameShort"] %></td>
             <td><%=((DateTime)(Dt.Rows[i]["AddTime"])).ToString("yyyy年MM月dd日") %></td>
-            <td><a href="DocumentEdit.aspx?id=<%=Dt.Rows[i][0] %>" class="text-primary">编辑</a></td>
         </tr>
         <%} %>
     </tbody>
