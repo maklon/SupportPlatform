@@ -32,7 +32,7 @@
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="PageContent" Runat="Server">
-    <div class="MainContainer caption text-right" style="padding-right: 30px;"><a href="DocumentEdit.aspx" class="btn btn-primary">开始咨询</a></div>
+    <div class="MainContainer caption text-right" style="padding-right: 30px;"><a href="QuestionAddnew.aspx" class="btn btn-primary">开始咨询</a></div>
     <div class="container" id="DataArea">
         
     </div>

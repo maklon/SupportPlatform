@@ -66,7 +66,7 @@
             if (confirm("你确定要发起这条咨询？") == false) return;
             $("#Dialog_OperateWaitting").dialog("open");
             $("#btn_addnew").attr("disabled", "disabled");
-            $.post("Ajax/QuestionOperate.aspx", {
+            $.post("Ajax/QuestionOperate1.aspx", {
                 action: "ADDNEW", id: 0, title: $("#Text_Title").val(), visable: $("#List_Visable").val(),
                 cid: $("#List_Class").val(), content: encodeURIComponent(docContent)
             }, function (data) {

@@ -149,46 +149,39 @@
 </nav>
 <div class="MainContainer caption text-right" style="padding-right:30px;"> <a href="javascript:void(0);" onClick="window.history.back();" class="btn btn-primary">返回</a> </div>
 <div class="container">
-    <div class="form-group" id="Gp_Title">
-    	<label for="Text_Title">文档标题</label>
-        <input id="Text_Title" type="text" class="form-control" onBlur="$(this).CheckIsEmpty('Gp_Title');">
-    </div>
-    <div class="row">
-    	<div class="col-md-6">
-        	<div class="form-group">
-            	<label for="Text_Tags">标签</label>
-                <input id="Text_Tags" type="text" class="form-control">
+	<div class="QuestionParent">
+    	<div class="Title">
+        	<div class="col-md-9">标题</div>
+            <div class="col-md-3 text-right">2014-4-22</div>
+        </div>
+        <div class="QuestionContent">
+            <div class="col-md-3">
+            	<div class="LeftPanel">
+                		417420348712340123
+                </div>
+            </div>
+            <div class="col-md-9">
+            	<div class="caption text-right">fdsafdsafdsa</div>
+                <p>fafdsafdsaf23423423423</p>
+                <p>fafdsafdsaf23423423423</p>
+                <p>fafdsafdsaf23423423423</p>
+                <p>fafdsafdsaf23423423423</p>
+                <p>fafdsafdsaf23423423423</p>
+                <p>fafdsafdsaf23423423423</p>
+                <p>fafdsafdsaf23423423423</p>
+                <p>fafdsafdsaf23423423423</p>
+                <p>fafdsafdsaf23423423423</p>
+                <p>fafdsafdsaf23423423423</p>
+                <p>fafdsafdsaf23423423423</p>
+                <p>fafdsafdsaf23423423423</p>
+                <p>fafdsafdsaf23423423423</p>
+                <p>fafdsafdsaf23423423423</p>
             </div>
         </div>
-        <div class="col-md-6">
-        	<div class="form-group">
-            	<label for="Text_Date">所属分类</label>
-                <select id="List_Class" class="form-control">
-                	<option value="0">请选择文档所属分类</option>
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-    	<label for="Text_Link">重定向链接</label>
-        <input id="Text_Link" type="text" class="form-control">
-    </div>
-    <div class="form-group">
-        <label for="Text_Content">文档内容</label>
-        <textarea id="Text_Content" rows="5" class="form-control"></textarea>
-    </div>
-    <div class="form-group text-center">
-    	<input id="btn_addnew" type="button" value="添加" class="btn btn-primary" onClick="AddnewDoc();">
-        <input id="btn_update" type="button" value="更新" class="btn btn-success" onClick="UpdateDoc();">
-        <input id="btn_delete" type="button" value="删除" class="btn btn-danger" onClick="DeleteDoc();">
     </div>
 </div>
-<div id="Dialog_Info" title="信息"></div>
-<div id="Dialog_OperateWaitting" title="数据传递中...">
-	<div class="caption text-center" id="Dialog_UploadWaitting_Text">正在传递数据</div>
-	<div class="progress progress-striped active">
-      <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
-    </div>
+<div class="container" id="DataArea">
+	
 </div>
 </body>
 </html>

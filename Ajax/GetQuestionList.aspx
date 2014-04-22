@@ -46,7 +46,7 @@
             PublicStatus = Convert.ToInt32(Request.QueryString["sid"]);
         }
 
-        SQL = "SELECT TOP " + (PageId * PageSize) + " QuestionList.Title,ClassList.ClassName,QuestionList.Dot,QuestionList.Re,QuestionList.VisableLevel,"
+        SQL = "SELECT TOP " + (PageId * PageSize) + "QuestionList.Id, QuestionList.Title,ClassList.ClassName,QuestionList.Dot,QuestionList.Re,QuestionList.VisableLevel,"
             + "QuestionList.Status,QuestionList.AddTime,QuestionList.LastReTime,CPInfo.CPNameShort FROM QuestionList INNER JOIN CPInfo ON QuestionList.AddUserCPId="
             + "CPInfo.Id INNER JOIN ClassList ON QuestionList.ClassId=ClassList.Id WHERE QuestionList.ParentId=0 AND QuestionList.Status>0";
         if (IsAdmin || IsManager) {
@@ -90,8 +90,10 @@
             case 1:
                 return "<span class=\"label label-warning\">等待回复</span>";
             case 2:
-                return "<span class=\"label label-danger\">锁定</span>";
+                return "<span class=\"label label-info\">讨论中</span>";
             case 3:
+                return "<span class=\"label label-danger\">锁定</span>";
+            case 10:
                 return "<span class=\"label label-success\">完结</span>";
             default:
                 return "<span class=\"label label-default\">未知</span>";
@@ -117,13 +119,13 @@
         if (ts.TotalMinutes < 6) {
             return "刚刚";
         } else if (ts.TotalMinutes < 60) {
-            return ts.TotalMinutes + "分钟前";
+            return (int)ts.TotalMinutes + "分钟前";
         } else if (ts.TotalHours < 24) {
-            return ts.TotalHours + "小时前";
+            return (int)ts.TotalHours + "小时前";
         } else if (ts.TotalDays < 7) {
-            return ts.TotalDays + "天以前";
+            return (int)ts.TotalDays + "天以前";
         } else if (ts.TotalDays/7<4) {
-            return ts.TotalDays/7+"周以上";
+            return (int)ts.TotalDays/7+"周以上";
         }else if (ts.TotalDays<60){
             return "1个月以上";    
         } else {
@@ -157,9 +159,9 @@
             <td><%=Dt.Rows[i]["Re"] %></td>
             <td><%=Dt.Rows[i]["CPNameShort"] %></td>
             <td><%=GetVisableLevelDisplayName((int)Dt.Rows[i]["VisableLevel"]) %></td>
-            <td><%=GetVisableLevelDisplayName((int)Dt.Rows[i]["Status"]) %></td>
+            <td><%=GetStatusDisplayName((int)Dt.Rows[i]["Status"]) %></td>
             <td><%=GetDateTimeSpanDisplayName((DateTime)(Dt.Rows[i]["AddTime"])) %></td>
-            <td><%=GetDateTimeSpanDisplayName((DateTime)(Dt.Rows[i]["LastReTime"])) %></td>
+            <td><%if (Dt.Rows[i]["LastReTime"].ToString()==""){Response.Write("--");}else{Response.Write(GetDateTimeSpanDisplayName((DateTime)(Dt.Rows[i]["LastReTime"])));} %></td>
         </tr>
         <%} %>
     </tbody>

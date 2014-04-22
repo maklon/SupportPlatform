@@ -52,11 +52,11 @@
         DB.SQLFiltrate(ref Content);
 
         if (Id == 0) {
-            SQL = "INSERT INTO QuestionList (ParentId,ClassId,Title,Content,VisableLevel,AddUserId,AddUserCPId) VALUES(0,"
+            SQL = "INSERT INTO QuestionList (ParentId,ClassId,Title,ContentText,VisableLevel,AddUserId,AddUserCPId) VALUES(0,"
                 + ClassId + ",'" + Title + "','" + Content + "'," + Visable + "," + Session["UserId"].ToString()
                 + "," + Session["CPId"].ToString() + ")";
         } else {
-            SQL = "INSERT INTO QuestionList (ParentId,Content,AddUserId,AddUserCPId) VALUES(" + Id + ",'"
+            SQL = "INSERT INTO QuestionList (ParentId,ContentText,AddUserId,AddUserCPId) VALUES(" + Id + ",'"
                 + Content + "'" + "," + Session["UserId"].ToString() + "," + Session["CPId"].ToString() + ");"
                 + "UPDATE QuestionList SET Re=Re+1,LastReTime=GETDATE() WHERE Id=" + Id;
         }
