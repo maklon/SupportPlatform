@@ -54,75 +54,29 @@
                 return;
             }
             docContent = CKEDITOR.instances.Text_Content.getData();
-            if (docContent == "" && $("#Text_Link").val() == "") {
-                $("#Dialog_Info").ShowDialog("文档内容或重定向链接不能同时为空。");
+            if (docContent == "") {
+                $("#Dialog_Info").ShowDialog("咨询的内容没有填写。");
                 return;
             }
             if ($("#List_Class").val() == "0") {
-                $("#Dialog_Info").ShowDialog("请选择文档的分类。");
+                $("#Dialog_Info").ShowDialog("请选择咨询问题的分类。");
                 return;
             }
 
-            if (confirm("你确定要添加这份文档吗？") == false) return;
+            if (confirm("你确定要发起这条咨询？") == false) return;
             $("#Dialog_OperateWaitting").dialog("open");
-            $.post("Ajax/DocumentOperate.aspx", {
-                action: "ADDNEW", id: 0, title: $("#Text_Title").val(), oid: $("#Text_OrderId").val(),
-                cid: $("#List_Class").val(), link: $("#Text_Link").val(), content: encodeURIComponent(docContent)
+            $("#btn_addnew").attr("disabled", "disabled");
+            $.post("Ajax/QuestionOperate.aspx", {
+                action: "ADDNEW", id: 0, title: $("#Text_Title").val(), visable: $("#List_Visable").val(),
+                cid: $("#List_Class").val(), content: encodeURIComponent(docContent)
             }, function (data) {
                 $("#Dialog_OperateWaitting").dialog("close");
+                $("#btn_addnew").removeAttr("disabled");
                 jObject = $.parseJSON(data);
                 if (jObject.ResultCode == 0) {
-                    $("#Dialog_Info").ShowDialog("文档内容添加成功。");
+                    $("#Dialog_Info").ShowDialog("咨询内容添加成功。");
                 } else {
                     $("#Dialog_Info").ShowDialog(jObject.ResultMessage);
-                }
-            });
-        }
-
-        function UpdateDoc() {
-            if ($("#Text_Title").val() == "") {
-                $("#Dialog_Info").ShowDialog("标题没有填写。");
-                return;
-            }
-            docContent = CKEDITOR.instances.Text_Content.getData();
-            if (docContent == "" && $("#Text_Link").val() == "") {
-                $("#Dialog_Info").ShowDialog("文档内容或重定向链接不能同时为空。");
-                return;
-            }
-            if ($("#List_Class").val() == "0") {
-                $("#Dialog_Info").ShowDialog("请选择文档的分类。");
-                return;
-            }
-            if (confirm("你确定要更新这份文档吗？") == false) return;
-            $("#Dialog_OperateWaitting").dialog("open");
-            $.post("Ajax/DocumentOperate.aspx", {
-                action: "UPDATE", id: Id, title: $("#Text_Title").val(), oid: $("#Text_OrderId").val(),
-                cid: $("#List_Class").val(), link: $("#Text_Link").val(), content: encodeURIComponent(docContent)
-            }, function (data) {
-                $("#Dialog_OperateWaitting").dialog("close");
-                jObject = $.parseJSON(data);
-                if (jObject.ResultCode == 0) {
-                    $("#Dialog_Info").ShowDialog("文档内容更新成功。");
-                } else {
-                    $("#Dialog_Info").ShowDialog(jObject.ResultMessage);
-                }
-            });
-        }
-
-        function DeleteDoc() {
-            if (confirm("你确定要删除这份文档吗？") == false) return;
-            $("#btn_update").addClass("disabled");
-            $("#btn_delete").addClass("disibled");
-            $.post("Ajax/DocumentOperate.aspx", { action: "DELETE", id: Id }, function (data) {
-                jObject = $.parseJSON(data);
-                if (jObject.ResultCode == 0) {
-                    $("#Dialog_Info").ShowDialog("文档删除成功。");
-                    $("#btn_update").removeClass("disabled");
-                    $("#btn_delete").removeClass("disibled");
-                } else {
-                    $("#Dialog_Info").ShowDialog(jObject.ResultMessage);
-                    $("#btn_update").removeClass("disabled");
-                    $("#btn_delete").removeClass("disibled");
                 }
             });
         }
@@ -138,11 +92,10 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label for="Text_Tags">可见级别</label>
+                    <label for="Text_Tags">内容可见级别</label>
                     <select id="List_Visable" class="form-control">
-                        <option value="">请选择可见级别</option>
                         <option value="5"><%=Session["CPNameShort"] %>下成员可见</option>
-                        <option value="10">所有成员可见</option>
+                        <option value="10" selected>所有成员可见</option>
                     </select>
                 </div>
             </div>
@@ -163,12 +116,7 @@
             <textarea id="Text_Content" rows="5" class="form-control"><%=Content %></textarea>
         </div>
         <div class="form-group text-center">
-            <%if (Id == 0) { %>
             <input id="btn_addnew" type="button" value="添加" class="btn btn-primary" onclick="AddnewDoc();">
-            <%} else { %>
-            <input id="btn_update" type="button" value="更新" class="btn btn-success" onclick="UpdateDoc();">
-            <input id="btn_delete" type="button" value="删除" class="btn btn-danger" onclick="DeleteDoc();">
-            <%} %>
         </div>
     </div>
     <div id="Dialog_Info" title="信息"></div>
