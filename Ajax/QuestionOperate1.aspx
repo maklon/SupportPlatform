@@ -9,28 +9,27 @@
     string Title, Content, ClassId,Visable, Action, SQL;
     int Id;
     string JsonResult;
+    ResultInfo rInfo = new ResultInfo();
     
     void Page_Load(object Sender, EventArgs e) {
+        if (Session["UserId"] == null) {
+            rInfo.ResultMessage = "登录已超时，请重新登录。";
+            JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
+            Response.Write(JsonResult);
+            Response.End();
+        }
+        
+        
         if (Request.Form["id"] == null) {
             Id = 0;
         } else {
             Id = Convert.ToInt32(Request["id"]);
         }
 
-        ResultInfo rInfo = new ResultInfo();
-
-
         Title = Request.Form["title"];
         Content = Server.UrlDecode(Request.Form["content"]);
         ClassId = Request.Form["cid"];
         Visable = Request.Form["visable"];
-        if (string.IsNullOrEmpty(Title)) {
-            rInfo.ResultCode = 1;
-            rInfo.ResultMessage = "咨询标题为空。";
-            JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
-            Response.Write(JsonResult);
-            Response.End();
-        }
         if (string.IsNullOrEmpty(Content)) {
             rInfo.ResultCode = 1;
             rInfo.ResultMessage = "咨询内容为空。";
@@ -38,15 +37,25 @@
             Response.Write(JsonResult);
             Response.End();
         }
-        if (string.IsNullOrEmpty(ClassId) || !General.IsMatch(ClassId, "^\\d+$") || ClassId == "0") {
-            rInfo.ResultCode = 1;
-            rInfo.ResultMessage = "请选择文档的分类。";
-            JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
-            Response.Write(JsonResult);
-            Response.End();
+        if (Id == 0) {
+            if (string.IsNullOrEmpty(Title)) {
+                rInfo.ResultCode = 1;
+                rInfo.ResultMessage = "咨询标题为空。";
+                JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
+                Response.Write(JsonResult);
+                Response.End();
+            }
+
+            if (string.IsNullOrEmpty(ClassId) || !General.IsMatch(ClassId, "^\\d+$") || ClassId == "0") {
+                rInfo.ResultCode = 1;
+                rInfo.ResultMessage = "请选择文档的分类。";
+                JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
+                Response.Write(JsonResult);
+                Response.End();
+            }
         }
         if (string.IsNullOrEmpty(Visable) || !General.IsMatch(Visable, "^\\d+$")) {
-            Visable = "10";
+            Visable = "1";
         }
         DB.SQLFiltrate(ref Title);
         DB.SQLFiltrate(ref Content);
@@ -58,7 +67,7 @@
         } else {
             SQL = "INSERT INTO QuestionList (ParentId,ContentText,AddUserId,AddUserCPId) VALUES(" + Id + ",'"
                 + Content + "'" + "," + Session["UserId"].ToString() + "," + Session["CPId"].ToString() + ");"
-                + "UPDATE QuestionList SET Re=Re+1,LastReTime=GETDATE() WHERE Id=" + Id;
+                + "UPDATE QuestionList SET Re=Re+1,Status=2,LastReTime=GETDATE() WHERE Id=" + Id; 
         }
 
         try {
@@ -90,17 +99,5 @@
             this.ResultCode = resultCode;
             this.ResultMessage = resultMessage;
         }
-    }
-
-    private void TagInStore_AddNew(string tags) {
-        if (string.IsNullOrEmpty(tags)) return;
-        string[] taglist = tags.Split(',');
-        SQL = "SELECT Id,Tags FROM DocumentList WHERE IsTagInStore=0";
-        Sr = MZ.GetReader(SQL);
-        while (Sr.Read()) {
-            
-        }
-        Sr.Close();
-        
     }
 </script>

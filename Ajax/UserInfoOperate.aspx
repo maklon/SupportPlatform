@@ -9,15 +9,30 @@
     string UserName, Password, CPId, Role, Action, SQL;
     int Id;
     string JsonResult;
+    ResultInfo rInfo = new ResultInfo();
     
     void Page_Load(object Sender, EventArgs e) {
+        if (Session["UserId"] == null) {
+            rInfo.ResultMessage = "登录已超时，请重新登录。";
+            JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
+            Response.Write(JsonResult);
+            Response.End();
+        }
+
+        if (Session["UserRole"].ToString()!="system") {
+            rInfo.ResultMessage = "你没有权限进行相关操作。";
+            JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
+            Response.Write(JsonResult);
+            Response.End();
+        }
+        
         if (Request["id"] == null) {
             Id = 0;
         } else {
             Id = Convert.ToInt32(Request["id"]);
         }
 
-        ResultInfo rInfo = new ResultInfo();
+        
 
         Action = Request["action"];
         if (Action == "DELETE") {

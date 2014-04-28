@@ -9,15 +9,15 @@
     int Id;
     
     void Page_Load(object Sender, EventArgs e) {
-        if (Request.Form["id"] == null) {
+        if (Request.QueryString["id"] == null) {
             Id = 0;
         } else {
-            Id = Convert.ToInt32(Request["id"]);
+            Id = Convert.ToInt32(Request.QueryString["id"]);
         }
         SQL = "UPDATE QuestionList SET Dot=Dot+1 WHERE Id=" + Id;
         try {
             MZ.ExecuteSQL(SQL);
-            Server.TransferRequest("QuestionContent.aspx");
+            Response.Redirect("QuestionContent.aspx?id=" + Id, true);
         } catch (Exception ex) {
             Response.Write(ex.Message);
         }

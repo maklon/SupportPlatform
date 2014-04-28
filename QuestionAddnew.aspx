@@ -94,7 +94,7 @@
                 <div class="form-group">
                     <label for="Text_Tags">内容可见级别</label>
                     <select id="List_Visable" class="form-control">
-                        <option value="5"><%=Session["CPNameShort"] %>下成员可见</option>
+                        <option value="5">仅<%=Session["CPNameShort"] %>下成员可见</option>
                         <option value="10" selected>所有成员可见</option>
                     </select>
                 </div>

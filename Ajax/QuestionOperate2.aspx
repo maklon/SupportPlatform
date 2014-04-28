@@ -6,59 +6,52 @@
 <script runat="server">
     DB MZ = new DB(ConfigurationManager.ConnectionStrings["DBConn"].ConnectionString);
     SqlDataReader Sr;
-    string Title, Content, ClassId,Visable, Action, SQL;
-    int Id;
-    string JsonResult;
+    int Id, Val;
+    string JsonResult, SQL, Action;
+    ResultInfo rInfo = new ResultInfo();
+    bool IsAdmin, IsManager;
     
     void Page_Load(object Sender, EventArgs e) {
-        if (Request.Form["id"] == null) {
+        if (Session["UserId"] == null) {
+            rInfo.ResultMessage = "登录已超时，请重新登录。";
+            JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
+            Response.Write(JsonResult);
+            Response.End();
+        }
+        if (Session["UserRole"].ToString() == "system") {
+            IsAdmin = true;
+        } else if (Session["UserRole"].ToString() == "manager") {
+            IsManager = true;
+        } else {
+            IsAdmin = false; IsManager = false;
+        }
+        
+        if (Request.QueryString["id"] == null) {
             Id = 0;
         } else {
             Id = Convert.ToInt32(Request["id"]);
         }
-
-        ResultInfo rInfo = new ResultInfo();
-
-
-        Title = Request.Form["title"];
-        Content = Server.UrlDecode(Request.Form["content"]);
-        ClassId = Request.Form["cid"];
-        Visable = Request.Form["visable"];
-        if (string.IsNullOrEmpty(Title)) {
-            rInfo.ResultCode = 1;
-            rInfo.ResultMessage = "咨询标题为空。";
-            JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
-            Response.Write(JsonResult);
-            Response.End();
-        }
-        if (string.IsNullOrEmpty(Content)) {
-            rInfo.ResultCode = 1;
-            rInfo.ResultMessage = "咨询内容为空。";
-            JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
-            Response.Write(JsonResult);
-            Response.End();
-        }
-        if (string.IsNullOrEmpty(ClassId) || !General.IsMatch(ClassId, "^\\d+$") || ClassId == "0") {
-            rInfo.ResultCode = 1;
-            rInfo.ResultMessage = "请选择文档的分类。";
-            JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
-            Response.Write(JsonResult);
-            Response.End();
-        }
-        if (string.IsNullOrEmpty(Visable) || !General.IsMatch(Visable, "^\\d+$")) {
-            Visable = "10";
-        }
-        DB.SQLFiltrate(ref Title);
-        DB.SQLFiltrate(ref Content);
-
-        if (Id == 0) {
-            SQL = "INSERT INTO QuestionList (ParentId,ClassId,Title,Content,VisableLevel,AddUserId,AddUserCPId) VALUES(0,"
-                + ClassId + ",'" + Title + "','" + Content + "'," + Visable + "," + Session["UserId"].ToString()
-                + "," + Session["CPId"].ToString() + ")";
+        if (Request.QueryString["val"] == null) {
+            Val = 0;
         } else {
-            SQL = "INSERT INTO QuestionList (ParentId,Content,AddUserId,AddUserCPId) VALUES(" + Id + ",'"
-                + Content + "'" + "," + Session["UserId"].ToString() + "," + Session["CPId"].ToString() + ");"
-                + "UPDATE QuestionList SET Re=Re+1,LastReTime=GETDATE() WHERE Id=" + Id;
+            Val = Convert.ToInt32(Request["val"]);
+        }
+
+        Action = Request.QueryString["action"];
+        SQL = "";
+        if (Action == "ORDER" &&(IsAdmin || IsManager)) {
+            SQL = "UPDATE QuestionList SET OrderId=" + Val + " WHERE Id=" + Id;
+        } else if (Action == "STATUS" && (IsAdmin || IsManager)) {
+            SQL = "UPDATE QuestionList SET Status=" + Val + " WHERE Id=" + Id;
+        } else if (Action == "VISABLE" && (IsAdmin || IsManager)) {
+            SQL = "UPDATE QuestionList SET VisableLevel=" + Val + " WHERE Id=" + Id;
+        } else if (Action == "DELETE") {
+            SQL = "UPDATE QuestionList SET Status=0 WHERE Id=" + Id + " AND AddUserId=" + Session["UserId"].ToString();
+        } else {
+            rInfo.ResultMessage = "不能识别的命令或权限不足。";
+            JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
+            Response.Write(JsonResult);
+            Response.End();
         }
 
         try {
@@ -90,17 +83,5 @@
             this.ResultCode = resultCode;
             this.ResultMessage = resultMessage;
         }
-    }
-
-    private void TagInStore_AddNew(string tags) {
-        if (string.IsNullOrEmpty(tags)) return;
-        string[] taglist = tags.Split(',');
-        SQL = "SELECT Id,Tags FROM DocumentList WHERE IsTagInStore=0";
-        Sr = MZ.GetReader(SQL);
-        while (Sr.Read()) {
-            
-        }
-        Sr.Close();
-        
     }
 </script>

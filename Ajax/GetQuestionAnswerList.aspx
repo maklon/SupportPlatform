@@ -11,8 +11,8 @@
     SqlDataReader Sr;
     DataTable Dt;
     string SQL;
-    int PageId, ClassId, PublicStatus, TotalDataCount, TotalPageCount, StartId, EndId, StartPageId, EndPageId;
-    int PageSize = 20;
+    int PageId, Id, PublicStatus, TotalDataCount, TotalPageCount, StartId, EndId, StartPageId, EndPageId;
+    int PageSize = 10;
     int PageSpan = 4;
     bool IsAdmin, IsManager;
 
@@ -35,33 +35,31 @@
         } else {
             PageId = Convert.ToInt32(Request.QueryString["page"]);
         }
-        if (Request.QueryString["cid"] == null) {
-            ClassId = 0;
+        if (Request.QueryString["id"] == null) {
+            Id = 0;
         } else {
-            ClassId = Convert.ToInt32(Request.QueryString["cid"]);
+            Id = Convert.ToInt32(Request.QueryString["id"]);
         }
-        if (Request.QueryString["sid"] == null) {
-            PublicStatus = 0;
-        } else {
-            PublicStatus = Convert.ToInt32(Request.QueryString["sid"]);
+        if (Id == 0) {
+            Response.Write("<div class=\"caption text-center\">暂时没有回复</div>");
+            Response.End();
         }
+        SQL = "SELECT TOP " + (PageId * PageSize) + " QuestionList.*,UserInfo.UserName,CPInfo.CPNameShort FROM QuestionList "
+            + "INNER JOIN UserInfo ON QuestionList.AddUserId=UserInfo.Id "
+            + "INNER JOIN CPInfo ON QuestionList.AddUserCPId=CPInfo.Id "
+            + "WHERE QuestionList.Status>0 AND QuestionList.ParentId=" + Id;
 
-        SQL = "SELECT TOP " + (PageId * PageSize) + " QuestionList.Id, QuestionList.Title,ClassList.ClassName,QuestionList.Dot,QuestionList.Re,QuestionList.VisableLevel,"
-            + "QuestionList.Status,QuestionList.AddTime,QuestionList.LastReTime,CPInfo.CPNameShort FROM QuestionList INNER JOIN CPInfo ON QuestionList.AddUserCPId="
-            + "CPInfo.Id INNER JOIN ClassList ON QuestionList.ClassId=ClassList.Id WHERE QuestionList.ParentId=0 AND QuestionList.Status>0";
-        if (IsAdmin || IsManager) {
-            SQL += " AND QuestionList.VisableLevel>0";
-        } else {
-            SQL += " AND (QuestionList.VisableLevel=10 OR (QuestionList.VisableLevel=5 AND QuestionList.AddUserCPId=" + Session["CPId"].ToString() + ")";
-        }
-        if (ClassId > 0) SQL += " AND DocumentList.ClassId=" + ClassId;
-        SQL += " ORDER BY QuestionList.OrderId DESC,QuestionList.Id DESC";
         MZ.CreateDataTable(SQL, "DL");
         Dt = MZ.Tables["DL"];
+
+        if (Dt.Rows.Count == 0) {
+            Response.Write("<div class=\"caption text-center\">暂时没有回复</div>");
+            Response.End();
+        }
         StartId = (PageId - 1) * PageSize;
         EndId = PageId * PageSize;
-        SQL = "SELECT COUNT(*) FROM QuestionList WHERE ParentId=0 AND Status>0";
-        if (ClassId > 0) SQL += " WHERE ClassId=" + ClassId;
+        SQL = "SELECT COUNT(*) FROM QuestionList WHERE Status>0 AND ParentId=" + Id;
+
         Sr = MZ.GetReader(SQL);
         if (Sr.Read()) {
             TotalDataCount = Sr.GetInt32(0);
@@ -124,48 +122,54 @@
             return (int)ts.TotalHours + "小时前";
         } else if (ts.TotalDays < 7) {
             return (int)ts.TotalDays + "天以前";
-        } else if (ts.TotalDays/7<4) {
-            return (int)ts.TotalDays/7+"周以上";
-        }else if (ts.TotalDays<60){
-            return "1个月以上";    
+        } else if (ts.TotalDays / 7 < 4) {
+            return (int)ts.TotalDays / 7 + "周以上";
+        } else if (ts.TotalDays < 60) {
+            return "1个月以上";
         } else {
             return "很久了";
         }
     }
 
 </script>
-<table class="table table-hover table-striped">
-    <thead style="font-weight: bold; font-size: 16px;">
-        <tr>
-            <td style="width: 5%">#</td>
-            <td style="width: 30%">标题</td>
-            <td style="width: 10%">分类</td>
-            <td style="width: 5%">点击</td>
-            <td style="width: 5%">回复</td>
-            <td style="width: 9%">发起CP</td>
-            <td style="width: 8%">可见级别</td>
-            <td style="width: 8%">状态</td>
-            <td style="width: 10%">发起时间</td>
-            <td style="width: 10%">回复时间</td>
-        </tr>
-    </thead>
-    <tbody>
-        <%for (int i = StartId; i < EndId && i < Dt.Rows.Count; i++) { %>
-        <tr>
-            <td><%=Dt.Rows[i][0] %></td>
-            <td><a href="QuestionToShow.aspx?id=<%=Dt.Rows[i][0] %>" target="_blank" class="color_primary"><%=Dt.Rows[i]["Title"] %></a></td>
-            <td><%=Dt.Rows[i]["ClassName"] %></td>
-            <td><%=Dt.Rows[i]["Dot"] %></td>
-            <td><%=Dt.Rows[i]["Re"] %></td>
-            <td><%=Dt.Rows[i]["CPNameShort"] %></td>
-            <td><%=GetVisableLevelDisplayName((int)Dt.Rows[i]["VisableLevel"]) %></td>
-            <td><%=GetStatusDisplayName((int)Dt.Rows[i]["Status"]) %></td>
-            <td><%=GetDateTimeSpanDisplayName((DateTime)(Dt.Rows[i]["AddTime"])) %></td>
-            <td><%if (Dt.Rows[i]["LastReTime"].ToString()==""){Response.Write("--");}else{Response.Write(GetDateTimeSpanDisplayName((DateTime)(Dt.Rows[i]["LastReTime"])));} %></td>
-        </tr>
-        <%} %>
-    </tbody>
-</table>
+<%for (int i = StartId; i < EndId && i < Dt.Rows.Count; i++) { %>
+<div class="QuestionParent">
+    <div class="QuestionContent QuestionContent_Re">
+        <div class="LeftPanel">
+            <p>回复人：<%=Dt.Rows[i]["UserName"] %></p>
+            <p>所属CP：<%=Dt.Rows[i]["CPNameShort"] %></p>
+            <p>回复时间：</p>
+            <p><%=Dt.Rows[i]["AddTime"] %></p>
+            <p><%if ((int)Dt.Rows[i]["Status"]==5) {%>
+                <h3 class="text-center"><span class="label label-info">参考答案</span></h3>
+                <%}else if((int)Dt.Rows[i]["Status"]==6){ %>
+                <h3 class="text-center"><span class="label label-success">最佳答案</span></h3>
+                <%} %>
+            </p>
+        </div>
+        <div class="RightPanel">
+            <div class="btn-toolbar" style="margin-bottom: 10px;">
+                <%if (IsAdmin || IsManager){ %>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">设为答案<span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="javascript:void(0);" onclick="SetStatus(<%=Dt.Rows[i][0] %>,1);">取消标识</a></li>
+                        <li><a href="javascript:void(0);" onclick="SetStatus(<%=Dt.Rows[i][0] %>,5);">设为标准答案</a></li>
+                        <li><a href="javascript:void(0);" onclick="SetStatus(<%=Dt.Rows[i][0] %>,6);">设为最佳答案</a></li>
+                    </ul>
+                </div>
+                <%} %>
+                <%if ((int)Dt.Rows[i]["AddUserId"]==(int)Session["UserId"]){ %>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="DeleteIt(<%=Dt.Rows[i][0] %>);">删除</button>
+                </div>
+                <%} %>
+            </div>
+            <%=Dt.Rows[i]["ContentText"] %>
+        </div>
+    </div>
+</div>
+<%} %>
 <div class="text-right">
     <ul class="pagination">
         <li<%if (PageId == 1) { Response.Write(" class=\"disabled\""); } %>><a href="javascript:void(0);" onclick="GetData(1);">&laquo;</a></li>

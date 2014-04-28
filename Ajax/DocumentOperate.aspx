@@ -9,15 +9,21 @@
     string Title, Content, ClassId, LinkUrl, Action, SQL;
     int Id;
     string JsonResult;
+    ResultInfo rInfo = new ResultInfo();
     
     void Page_Load(object Sender, EventArgs e) {
+        if (Session["UserId"] == null) {
+            rInfo.ResultMessage = "登录已超时，请重新登录。";
+            JsonResult = JsonConvert.SerializeObject(rInfo, Formatting.Indented);
+            Response.Write(JsonResult);
+            Response.End();
+        }
+        
         if (Request.Form["id"] == null) {
             Id = 0;
         } else {
             Id = Convert.ToInt32(Request["id"]);
         }
-
-        ResultInfo rInfo = new ResultInfo();
 
         Action = Request.Form["action"];
         if (Action == "DELETE") {
@@ -100,17 +106,5 @@
             this.ResultCode = resultCode;
             this.ResultMessage = resultMessage;
         }
-    }
-
-    private void TagInStore_AddNew(string tags) {
-        if (string.IsNullOrEmpty(tags)) return;
-        string[] taglist = tags.Split(',');
-        SQL = "SELECT Id,Tags FROM DocumentList WHERE IsTagInStore=0";
-        Sr = MZ.GetReader(SQL);
-        while (Sr.Read()) {
-            
-        }
-        Sr.Close();
-        
     }
 </script>

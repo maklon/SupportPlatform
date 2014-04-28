@@ -6,6 +6,7 @@ body {
 .QuestionParent {
 	border: 1px solid #cdcdcd;
 	border-radius:5px;
+	margin-bottom:10px;
 }
 .QuestionParent .Title {
 	clear:both;
@@ -17,15 +18,44 @@ body {
 	background-color:#428bca;
 }
 .QuestionContent {
+	position:relative;
+	display:inline-block;
 	min-height:250px;
-	height:auto;
-	overflow:hidden;
+}
+.QuestionContent_Default {
+	/*border-left:220px solid #abcfee;*/
+	border-left:220px solid #f1f1f1;
+}
+.QuestionContent_Re {
+	/*border-left:220px solid #eee5ab;*/
+	border-left:220px solid #f1f1f1;
+}
+.QuestionContent_Best {
+	border-left:220px solid #c0ecc0;
 }
 .QuestionContent p {
 	text-indent:2em;
 }
-.QuestionParent .LeftPanel {
-	background-color:#f1f1f1;
-	width:100%;
-	height:auto;
+.QuestionContent .LeftPanel {
+	float:left;
+	width:200px;
+	padding:10px;
+	margin-left:-220px;
+	position:relative;
+	min-height:250px;
+	height:auto !important;
+	height:250px;
+}
+.QuestionContent .RightPanel {
+	float:left;
+	padding:10px;
+}
+.color_success {
+	color:#5cb85c;	
+}
+.color_primary {
+	color:#428bca;
+}
+.color_danger {
+	color:#d9534f;
 }

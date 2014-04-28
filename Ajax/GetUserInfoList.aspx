@@ -17,6 +17,10 @@
     string Role = "";
 
     protected void Page_Load(object sender, EventArgs e) {
+        if (Session["UserId"] == null) {
+            Response.Write("登录超时，请重新登录。");
+            Response.End();
+        }
         if (Request.QueryString["page"] == null) {
             PageId = 1;
         } else {
