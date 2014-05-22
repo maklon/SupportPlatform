@@ -1,23 +1,8 @@
 ﻿<!DOCTYPE html>
 <%@ Master Language="C#" %>
-<script runat="server">
-    bool IsAdmin;
-    string UserName;
-    
+<script runat="server">    
     protected void Page_Load(object Sender, EventArgs e) {
-        if (Session["UserId"] == null) Response.Redirect("Login.html", true);
-        if (Session["UserRole"] == null || Session["UserRole"].ToString().IndexOf("system") == -1) {
-            IsAdmin = false;
-        } else {
-            IsAdmin = true;
-        }
-        if ((int)Session["UserId"] == 0) {
-            Session["UserId"] = null;
-            UserName = "未登录用户";
-        } else {
-            UserName = (string)Session["UserName"];
-        }
-       
+
     }
 </script>
 <html>
@@ -59,14 +44,10 @@
                     </ul>
                 </li>
                 <li id="MenuHelp"><a href="QuestionList.aspx">咨询中心</a></li>
-                <%if (IsAdmin) { %>
-                <li id="MenuClass"><a href="ClassList.aspx">分类管理</a></li>
-                <li id="MenuUser"><a href="UserList.aspx">用户管理</a></li>
-                <li id="MenuCP"><a href="CPList.aspx">CP管理</a></li>
-                <%} %>
+                
             </ul>
             <ul class="nav navbar-nav navbar-right" style="margin-right: 10px;">
-                <li><a href="Logout.aspx"><%=UserName %>&nbsp;退出</a></li>
+                <li><a href="GoToLogin.aspx">登录</a></li>
             </ul>
         </div>
     </nav>

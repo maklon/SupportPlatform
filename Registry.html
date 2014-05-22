@@ -1,0 +1,155 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CP支撑平台</title>
+    <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="Bootstrap/css/bootstrap-theme-cerulean.min.css" rel="stylesheet" type="text/css">
+    <link href="jquery-ui/css/redmond/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css">
+    <link href="Css/theme-ui.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="Scripts/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="Bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="jquery-ui/js/jquery-ui-1.10.4.custom.min.js"></script>
+    <script type="text/javascript" src="Scripts/jQuery.Bootstrap.WebUI.js"></script>
+    <script type="text/javascript">
+        var jObject;
+        var jObject2;
+
+        $(document).ready(function () {
+            $("#Dialog_Info").dialog({
+                autoOpen: false,
+                buttons: {
+                    "确定": function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+
+            $("#Dialog_OperateWaitting").dialog({
+                autoOpen: false,
+                modal: true,
+                width: 400,
+                closeText: "hide"
+            });
+        });
+
+        function ValidateInfo() {
+            if ($("#Text_CPCode").val() == "" || $("#Text_CPAccount").val() == "" || $("#Text_VC").val() == "") return;
+            $("#Dialog_OperateWaitting").dialog("open");
+            $.get("Ajax/ValidateCPInfo.aspx", { cpcode: $("#Text_CPCode").val(), account: $("#Text_CPAccount").val(), vc: $("#Text_VC").val() }, function (data) {
+                $("#Dialog_OperateWaitting").dialog("close");
+                jObject = $.parseJSON(data);
+                if (jObject.ResultCode == 1) {
+                    $("#Dialog_Info").ShowDialog(jObject.ResultMessage);
+                    RefreshVC();
+                    $("#Text_VC").val("");
+                } else {
+                    jObject2 = $.parseJSON(jObject.ResultMessage);
+                    $("#AgreeThisCPText").html("我确定将账号绑定到 " + jObject2.cnName + " 下。");
+                    $("#Registry1").hide();
+                    $("#Registry2").show("slow");
+                }
+            });
+        }
+
+        function RefreshVC() {
+            $("#Img_VC").attr("src", "ValidateImage.aspx?id="+new Date().getTime());
+        }
+
+        function Registry() {
+            if ($("#Text_UserName").val() == "" || $("#Text_Pwd1").val() == "" || $("#Text_Pwd2").val() == "") {
+                $("#Dialog_Info").ShowDialog("用户名或密码为空。");
+                return;
+            }
+            if ($("#Text_Pwd1").val() != $("#Text_Pwd2").val()) {
+                $("#Dialog_Info").ShowDialog("密码输入前后不符。"+$("#Text_Pwd1").val()+","+$("#Text_Pwd2").val());
+                return;
+            }
+            $("#Dialog_OperateWaitting").dialog("open");
+            $.get("Ajax/Registry.aspx", { uname: $("#Text_UserName").val(), pwd: $("#Text_Pwd1").val() }, function (data) {
+                $("#Dialog_OperateWaitting").dialog("close");
+                jObject = $.parseJSON(data);
+                if (jObject.ResultCode == 0) {
+                    $("#Dialog_Info").ShowDialog("注册成功。");
+                } else {
+                    $("#Dialog_Info").ShowDialog(jObject.ResultMessage);
+                }
+            });
+        }
+
+        function AgreeThisCP() {
+            if ($("#RegInCP").is(":checked")) {
+                $("#Btn_Registry").removeAttr("disabled");
+            } else {
+                $("#Btn_Registry").attr("disabled", "disabled");
+            }
+        }
+    </script>
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header"><a class="navbar-brand" href="Default.aspx">爱游戏&nbsp;CP支撑平台</a></div>
+    </nav>
+    <div class="caption text-right" style="padding-right:30px;">
+        <h4><a href="Registry.aspx" class="label label-default">新用户注册</a></h4>
+    </div>
+    <div class="container" style="width:500px;" id="Registry1">
+        <h2>用户注册-步骤1/2-验证CP信息</h2>
+        <div class="form-group" id="Gp_CPCode">
+            <label>请输入所属CP的CPCode</label>
+            <input id="Text_CPCode" type="text" class="form-control" maxlength="10" onblur="$(this).CheckIsEmpty('Gp_CPCode');">
+        </div>
+        <div class="form-group" id="GP_Account">
+            <label>请输入所选CP在商务平台的登录账号</label>
+            <input id="Text_CPAccount" type="text" class="form-control" maxlength="15" onblur="$(this).CheckIsEmpty('GP_Account');">
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group" id="Gp_VC">
+                    <label>请输入验证码:</label>
+                    <input id="Text_VC" type="text" class="form-control" maxlength="15" onblur="$(this).CheckIsEmpty('Gp_VC');">
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label>请输入图片中的字符，不区分大小写:</label>
+                    <p><img src="ValidateImage.aspx?id=<%=DateTime.Now.ToString()%>" width="65" height="25" id="Img_VC"></p>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="text-center"><input type="button" value="下一步" class="btn btn-primary" onclick="ValidateInfo();"></div>
+        </div>
+    </div>
+    <div class="container" style="width:500px; display:none;" id="Registry2">
+        <h2>用户注册-步骤2/2-注册</h2>
+        <div class="form-group" id="Gp_UserName">
+            <label>请输入登录用户名</label>
+            <input id="Text_UserName" type="text" class="form-control" maxlength="10" onblur="$(this).CheckIsEmpty('Gp_UserName');">
+        </div>
+        <div class="form-group" id="Gp_Pwd1">
+            <label>请输入登录密码</label>
+            <input id="Text_Pwd1" type="text" class="form-control" maxlength="10" onblur="$(this).CheckIsEmpty('Gp_Pwd1');">
+        </div>
+        <div class="form-group" id="Gp_Pwd2">
+            <label>再次输入密码</label>
+            <input id="Text_Pwd2" type="text" class="form-control" maxlength="10" onblur="$(this).CheckIsEmpty('Gp_Pwd2');">
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label><input type="checkbox" id="RegInCP" onclick="AgreeThisCP();" /><h4 id="AgreeThisCPText"></h4></label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="text-center"><input type="button" value="注册" class="btn btn-primary" onclick="Registry();" id="Btn_Registry" disabled="disabled"></div>
+        </div>
+    </div>
+    <div id="Dialog_Info" title="信息"></div>
+    <div id="Dialog_OperateWaitting" title="数据传递中...">
+        <div class="caption text-center" id="Dialog_UploadWaitting_Text">正在传递数据</div>
+        <div class="progress progress-striped active">
+            <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+        </div>
+    </div>
+</body>
+</html>
