@@ -73,7 +73,7 @@
         <%for (int i = StartId; i < EndId && i < Dt.Rows.Count; i++) { %>
         <tr>
             <td><%=Dt.Rows[i][0] %></td>
-            <td><%=Dt.Rows[i]["Title"] %></td>
+            <td><a href="DocumentShow.aspx?id=<%=Dt.Rows[i][0] %>" target="_blank" class="text-primary"><%=Dt.Rows[i]["Title"] %></a></td>
             <td><%=Dt.Rows[i]["ClassName"] %></td>
             <td><%=((DateTime)(Dt.Rows[i]["AddTime"])).ToString("yyyy年MM月dd日") %></td>
             <td><a href="DocumentEdit.aspx?id=<%=Dt.Rows[i][0] %>" class="text-primary">编辑</a></td>

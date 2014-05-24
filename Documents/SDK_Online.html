@@ -1,0 +1,647 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>单机SDK嵌入文档</title>
+<link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="../Bootstrap/css/bootstrap-theme-cerulean.min.css" rel="stylesheet" type="text/css">
+<link href="../jquery-ui/css/redmond/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css">
+<link href="../Css/theme-ui.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="../Scripts/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="../Bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../jquery-ui/js/jquery-ui-1.10.4.custom.min.js"></script>
+<script type="text/javascript" src="../Scripts/jQuery.Bootstrap.WebUI.js"></script>
+<link href="../highlight/styles/github.css" rel="stylesheet" type="text/css">
+<link href="document.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="../highlight/highlight.pack.js"></script>
+<script type="text/javascript">
+	var scrollTop=0;
+	$(document).ready(function(e) {
+        hljs.initHighlightingOnLoad();
+		
+		$(window).scroll(function(){
+			scrollTop=$(window).scrollTop();
+			if (scrollTop<100) {
+				$("#DocumentLeftPanel").css("top",200);	
+				$("#DocumentTitleContainerSmall").hide();
+				//$("#DocumentTitleContainer").show();
+			}else{
+				$("#DocumentTitleContainerSmall").show();
+				$("#DocumentTitleContainerSmall").css("top",scrollTop);
+				$("#DocumentLeftPanel").css("top",scrollTop+60);
+				//$("#DocumentTitleContainer").hide();
+				//$("#DocumentTitleContainerSmall").show();
+			}
+		});
+    });
+</script>
+</head>
+<body data-spy="scroll" data-target=".DocumentLeftPanel">
+<div id="DocumentTitleContainer" style="display:block;">
+  <div class="container DocumentTitle">
+    <h1 style="font-size:64px; font-weight:bold;">联网SDK嵌入文档</h1>
+    <h3>当前版本：本平台V2.3.2.0，外放和省渠道外放V2.3.3.0</h3>
+    <h4 class="text-right"><i>最后更新于 2014-5-20</i></h4>
+  </div>
+</div>
+<div id="DocumentTitleContainerSmall" style="display:none;">
+  <div class="container DocumentTitle">
+    <h3>联网SDK嵌入文档&nbsp;&nbsp;&nbsp;<span class="h4" style="color:#fff;">[本平台V2.3.2.0，外放和省渠道外放V2.3.3.0]</span>&nbsp;&nbsp;<span class="h5" style="color:#fff"><i>最后更新于 2014-5-20</i></span></h3>
+  </div>
+</div>
+<div class="FullContainer">
+  <div id="DocumentLeftPanel">
+    <ul class="DocumentDirLv1">
+      <li><a href="#Section1">一、游戏申报</a>
+        <ul class="DocumentDirLv2">
+          <li><a href="#Title1_1">1.1.本平台产品申报</a></li>
+          <li><a href="#Title1_2">1.2.外放产品申报</a></li>
+        </ul>
+      </li>
+      <li><a href="#Section2">二、计费SDK支付流程</a></li>
+      <li><a href="#Section3">三、计费SDK支付方法概述</a>
+        <ul class="DocumentDirLv2">
+          <li><a href="#Title3_1">3.1.短信计费方法</a></li>
+          <li><a href="#Title3_2">3.2.第三方计费方法</a></li>
+        </ul>
+      </li>
+      <li><a href="#Section4">四、CP服务器接收计费平台的计费回执</a>
+        <ul class="DocumentDirLv2">
+          <li><a href="#Title4_1">4.1.接收短信计费回执</a></li>
+          <li><a href="#Title4_2">4.2.接收第三方计费回执</a></li>
+        </ul>
+      </li>
+      <li><a href="#Section5">五、计费SDK嵌入过程</a>
+        <ul class="DocumentDirLv2">
+          <li><a href="#Title5_1">5.1.放置资源文件</a></li>
+          <li><a href="#Title5_2">5.2.配置AndroidManifest.xml</a></li>
+          <li><a href="#Title5_3">5.3.调用支付方法</a></li>
+        </ul>
+      </li>
+      <li><a href="#Section6">六、常见问题</a>
+        <ul class="DocumentDirLv2">
+          <li><a href="#Title6_1">6.1.代码混淆配置</a></li>
+          <li><a href="#Title6_2">6.2.短代回调地址新旧兼容解决方案</a></li>
+        </ul>
+      </li>
+      <li><a href="#Codicil">附录</a>
+        <ul class="DocumentDirLv2">
+          <li><a href="#Codicil1">各支付方法计费限额</a></li>
+          <li><a href="#Codicil2">计费错误代码说明</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div id="DocumentContent">
+    <h2 id="Section1">一、游戏申报</h2>
+    <h3 id="Title1_1">1.1.本平台产品申报</h3>
+    <p><strong>1.登录商务合作管理平台，点击左侧 普通单产品-创建产品</strong></p>
+    <div class="text-center"><img src="sdk_online/t1_1_createproduct1.jpg" width="957" height="523"></div>
+    <p><strong>2.按要求申报产品并上传截图、提交</strong></p>
+    <div class="text-center">
+      <p><img src="sdk_online/t1_1_createproduct2.jpg" width="992" height="647"></p>
+      <p><img src="sdk_online/t1_1_createproduct3.jpg" width="1135" height="576"></p>
+    </div>
+    <h3><span class="label label-danger">注意事项</span></h3>
+    <ul>
+      <li>产品类型请选择“联网游戏”</li>
+      <li>游戏包名请正确填写，提交后不能修改。</li>
+      <li>支付类型请选择“道具按次” </li>
+      <li>计费类型选择“SDK计费”</li>
+      <li>短信回调地址为短代支付回调接口，计费回调地址为三方支付回调接口（回调地址必须是一个完整的Url，不包含?）</li>
+      <li>游戏截图请按要求截取上传</li>
+      <li>游戏ICON图请使用游戏安装后的图标</li>
+    </ul>
+    <p><strong>3.获取配置文件</strong></p>
+    <p>审核通过后，点击左侧 普通单产品-产品管理（厂商），下载系统生成的配置文件，即&ldquo;<span class="color_danger"><strong>feeInfo.dat</strong></span>&rdquo;。</p>
+    <div class="text-center"><img src="sdk_online/t1_3_getfeeinfo.jpg" width="423" height="368"></div>
+    <h3 id="Title1_2">1.2.外放产品申报</h3>
+    <p>登录商务平台，点击左侧 产品发行（CP）-产品管理-创建产品；其他步骤及注意与本平台产品类似。</p>
+    <div class="text-center"><img src="sdk_online/t1_3_createproduct.jpg" width="960" height="413"></div>
+    <p>若没有“产品发行（CP）” 说明暂无发行产品权限，请联系渠道经理申请权限。获得到权限后进入产品发行（CP）- “申请发行”（注：第一次登陆产品发行（CP）中只操作一次）。
+      创建产品时，使用原游戏名即可，无需添加[爱游戏]后缀。审核通过后，可通过系统获取配置文件。可参见流程图。</p>
+    <div class="text-center"><img src="sdk_online/t1_3_registryflow.jpg" width="900" height="636"></div>
+    <div class="alert alert-danger">
+      <p><strong>外放产品包名特别注意事项</strong></p>
+      <p><strong>包名校验注意事项：如果申报时候包名为com.egame.zhijian那么在打渠道外放包的时候包名只要满足如下条件，计费SDK校验就可以通过：包名已com.egame.zhijian开头后面可以包含数字字母和一个点(.)。能通过的包名如下：com.egame.zhijian360，com.egame.zhijian91，com.egame.zhijianaz，com.egame.zhijian.az；</strong></p>
+      <p><strong>不能通过的包名：com.egame.zhijian.az.360</strong></p>
+    </div>
+    <h2 id="Section2">二、计费SDK支付流程</h2>
+    <div class="text-center"><img src="sdk_online/t2_1_flow.jpg" width="983" height="809"></div>
+    <ol>
+      <li>用户在游戏提供的商城中选购商品，商品并不局限于一件。</li>
+      <li>用户选购完商品，提交支付。</li>
+      <li>CP服务器将用户选购的商品保存在服务端，并生成唯一的订单号。该订单号可以保存用户Id、用户选购的商品信息、当前订单状态，订单生成时间等信息。</li>
+      <li>将该订单号与订单金额做为参数传递给SDK 进行支付。SDK 方法中pay 和paySms 中的形参serialNo可做为订单号的参数进行传递。</li>
+      <li>游戏调用 SDK进行支付，当用户完成支付操作后，SDK会提示支付请求发请成功，建议转至用户订单查询页面，以方便用户及时了解订单支付情况。</li>
+      <li>平台完成支付过程后，会将支付结果通知给CP 服务器。通知地址为商务平台中的“短信回调地址”和“计费回调地址”（即除短信之外支付方式的回调）。游戏服务器通过回调参数解析结果，如果计费成功则匹配订单号，实现交易。此过程由爱游戏平台服务器与游戏服务器之间交互，为安全起见，游戏服务器在测试通过后，需要限定回调请求的IP地址段（爱游戏平台回调ip 地址段：202.102.39.*）</li>
+      <li>CP服务器与游戏客户端交互，为用户更新相关数据。</li>
+    </ol>
+    <h2 id="Section3">三、计费SDK支付方法概述</h2>
+    <h3 id="Title3_1">3.1.短信计费方法</h3>
+    <pre><code class="java">
+EgameFee.payBySms(Activity activity, int feeMoney, String serialNo, bool otherPay,EgameFeeResultListener FeeCallback);
+
+//Activity activity:当前Activity
+//Int feeMoney:要计费的金额，单位：元
+//String serialNo:CP自定义交易号，最长32位。
+//Bool otherPay:当请求的计费金额不受短代支持时，自动调用第三方支付。
+//EgameFeeResultListener feeCallback:计费方法调用的反馈结果，计费请求发送成功、失败或取消。
+    </code></pre>
+    <h3 id="Title3_2">3.2.第三方计费方法</h3>
+    <p>第三方充值即为当前手机用户可以支持的全部支付渠道，包括但不限于短信充值，充值卡充值，支付宝支付、掌中付等支付方式。</p>
+    <pre><code class="java">
+EgameFee.pay(Activity activity, int feeMoney, String serialNo, EgameFeeResultListener FeeCallback);
+
+//Activity activity:当前Activity
+//Int feeMoney:要计费的金额，单位：元
+//String serialNo:CP自定义交易号，最长32位。
+//EgameFeeResultListener feeCallback:计费方法调用的反馈结果，计费请求发送成功、失败或取消。
+    </code></pre>
+    <h2 id="Section2">四、CP服务器接收计费平台的计费回执</h2>
+    <p>计费成功之后,平台会通过HTTP 接口的方式告知CP 计费的结果和订单号,CP 根据收到的回执进行增加游戏币的处理.接收回执的接口分为两种。</p>
+    <h3 id="Title4_1">4.1.接收短信计费回执</h3>
+    <p>商务平台中的“短信回调地址”为合作方网游服务器提供的一个http 协议地址，供爱游戏平台将网游短代订购业务受理结果通知到合作方。短代订购业务处理结束后立即将结果通知网游接口服务器。</p>
+    <p>1.通信协议格式：</p>
+    <p><strong><em>http://CPURL?</em>resultCode</strong>=00&amp;<strong>cpparam</strong>=xxxxx&amp;<strong>resultMsg</strong>=xxxx&amp;<strong>cost</strong>=xx&amp;<strong>payType</strong>=isagSmsPay&amp;<strong>validatecode</strong>=xxxx&amp;<strong>requestTime</strong>=xxxx<strong></strong></p>
+<p>Demo收到的回调示例：</p>
+    <p>http://180.96.63.68/smscallback.aspx?resultCode=00&amp;cpparam=20131206demo668&amp;resultMsg=%E8%AE%A2%E8%B4%AD%E6%88%90%E5%8A%9F&amp;cost=1&amp;payType=isagSmsPay&amp;validatecode=62f11b997c35fe11cbea5a4ffbcf23a6&amp;requestTime=2013-12-23%2014:19:39&amp;responseTime=2013-12-23%2014:19:39</p>
+    <p class="alert alert-danger"><strong>注意这里的?号是固定会带上的，所以短信回调地址中不要有?号。 </strong></p>
+    <p>回调参数说明：</p>
+    <table border="0" cellspacing="0" cellpadding="0" class="table table-striped" style="width:750px;">
+      <thead>
+        <tr style="background-color:#e5edfa; font-weight:bold;">
+          <td width="150">参数名</td>
+          <td width="100">类型</td>
+          <td width="500">参数说明</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="color_primary">resultCode</td>
+          <td class="color_success">String</td>
+          <td>返回的结果代码</td>
+        </tr>
+        <tr>
+          <td class="color_primary">cpparam</td>
+          <td class="color_success">String</td>
+          <td>CP在SDK中调用的参数值。对应payBySms方法中的serialNo值。</td>
+        </tr>
+        <tr>
+          <td class="color_primary">resultMsg</td>
+          <td class="color_success">String</td>
+          <td>返回结果说明</td>
+        </tr>
+        <tr>
+          <td class="color_primary">cost</td>
+          <td class="color_success">int</td>
+          <td>实际扣费金额，单位：元</td>
+        </tr>
+        <tr>
+          <td class="color_primary">payType</td>
+          <td class="color_success">String</td>
+          <td>isagSmsPay 表示短代回调</td>
+        </tr>
+        <tr>
+          <td class="color_primary">validatecode</td>
+          <td class="color_success">String</td>
+          <td>MD5(resultCode &amp; cpparam)</td>
+        </tr>
+        <tr>
+          <td class="color_primary">requestTime</td>
+          <td class="color_success">String</td>
+          <td>请求时间：yyyy-MM-dd HH:mm:ss</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>标识代码描述信息</p>
+    <table border="0" cellspacing="0" cellpadding="0" class="table table-striped" style="width:400px;">
+      <thead>
+        <tr style="background-color:#e5edfa; font-weight:bold;">
+          <td width="100">ResultCode</td>
+          <td width="300">ResultMsg</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="color_primary">00</td>
+          <td>订购成功</td>
+        </tr>
+        <tr>
+          <td class="color_primary">01</td>
+          <td>短代格式错误</td>
+        </tr>
+        <tr>
+          <td class="color_primary">02</td>
+          <td>合作方代码错误</td>
+        </tr>
+        <tr>
+          <td class="color_primary">03</td>
+          <td>订购产品代码错误</td>
+        </tr>
+        <tr>
+          <td class="color_primary">04</td>
+          <td>合作方游戏用户格式错误</td>
+        </tr>
+        <tr>
+          <td class="color_primary">05</td>
+          <td>合作方游戏流水号格式错误</td>
+        </tr>
+        <tr>
+          <td class="color_primary">06</td>
+          <td>接入码扩展位数值与实际道具金额不符</td>
+        </tr>
+        <tr>
+          <td class="color_primary">07</td>
+          <td>短代限额约束:详情说明</td>
+        </tr>
+        <tr>
+          <td class="color_primary">08</td>
+          <td>发送短信失败/订购失败</td>
+        </tr>
+        <tr>
+          <td class="color_primary">09</td>
+          <td>服务异常</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>2.结果通知异常情况处理：</p>
+    <p>如果通知合作方网游服务器异常并且是订购成功情况下，会再次通知网游接口服务器。重试机制视平台压力与闲置资源动态调整，当前默认5次。</p>
+    <p>3.CP服务器返回值</p>
+    <pre><code class="C#">//HTTP HEAD报文
+HTTP/1.1 200 OK
+Content-Type: text/html
+cpparam: 此处为回调中的cpparam参数
+
+
+//C#接收服务器回调代码示例
+	string ResultCode, CpParam, ResultMsg, Cost, PayType, ValidateCode, RequestTime;
+    protected void Page_Load(object sender, EventArgs e) {
+        PayType = Request.QueryString["payType"];
+        if (string.IsNullOrEmpty(PayType) || PayType != "isagSmsPay") {
+            //没有获取到新版参数，跳转到旧版API处理。
+            Server.Transfer("SMSCallback_Old.aspx", true);
+        }
+        ResultCode = Request.QueryString["resultCode"];
+        CpParam = Request.QueryString["cpparam"];
+        Response.AddHeader("cpparam", CpParam);
+        //Java代码示例如下
+        //Response.setHeader(“cpparam”, cpparam);
+        Response.Write("ResultCode:" + ResultCode + ",CpParam:" + CpParam);
+    }
+    </code></pre>
+    <p>是否回调成功的判定标准为，HTTP返回状态是否为200，以及CP将自定义参数在HTTP头中返回，则表示网游服务器成功接收，将终止回调。其他情况（如：404，500 等错误状态或没有在HTTP头中返回cpparam）会继续回调。</p>
+    <p class="alert alert-danger"><strong>为防止伪造回调请求，请在Web服务器上限定受信任IP地址为202.102.39.*</strong></p>
+    <h3 id="Title4_2">4.2.接收第三方计费回执</h3>
+    <p>1.通信协议格式</p>
+    <p><strong><em>http://CPURL?</em></strong> <strong>serialno</strong>=xxx&amp;<strong>resultCode</strong>=xxx&amp;<strong>resultMsg</strong>=xxx&amp;<strong>gameUserId</strong>=xxx&amp;<strong>gameGold</strong>=xx&amp;<strong>validatecode</strong>=xxx&amp;<strong>payType</strong>=xxx&amp;<strong>gameId</strong>=xxx&amp;<strong>requestTime</strong>=xxx&amp;<strong>responseTime</strong>=xxx</p>
+<p>Demo收到的回调示例</p>
+<p>http://180.96.63.68/smscallback.aspx?resultCode=00&amp;cpparam=20131206demo668&amp;resultMsg=%E8%AE%A2%E8%B4%AD%E6%88%90%E5%8A%9F&amp;cost=1&amp;payType=isagSmsPay&amp;validatecode=62f11b997c35fe11cbea5a4ffbcf23a6&amp;requestTime=2013-12-23%2014:19:39&amp;responseTime=2013-12-23%2014:19:39</p>
+    <p>回调参数说明：</p>
+    <table border="0" cellspacing="0" cellpadding="0" class="table table-striped" style="width:750px;">
+      <thead>
+        <tr style="background-color:#e5edfa; font-weight:bold;">
+          <td width="150">参数名</td>
+          <td width="100">类型</td>
+          <td width="500">参数说明</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="color_primary">serialno</td>
+          <td class="color_success">String</td>
+          <td>业务流水号，为爱游戏平台当日唯一操作流水号</td>
+        </tr>
+        <tr>
+          <td class="color_primary">resultCode</td>
+          <td class="color_success">String</td>
+          <td>支付结果代码：120=充值成功，121=充值失败，122=预留非成功返回代码</td>
+        </tr>
+        <tr>
+          <td class="color_primary">resultMsg</td>
+          <td class="color_success">String</td>
+          <td>支付结果消息，支付结果的文字表述</td>
+        </tr>
+        <tr>
+          <td class="color_primary">gameUserId</td>
+          <td class="color_success">String</td>
+          <td>CP在SDK中调用的参数值。对应pay方法中的serialNo值。</td>
+        </tr>
+        <tr>
+          <td class="color_primary">gameGold</td>
+          <td class="color_success">int</td>
+          <td>充值金额。单位：元</td>
+        </tr>
+        <tr>
+          <td class="color_primary">validatecode</td>
+          <td class="color_success">String</td>
+          <td>MD5(resultCode &amp; cpparam)</td>
+        </tr>
+        <tr>
+          <td class="color_primary">payType</td>
+          <td class="color_success">String</td>
+          <td>充值类型：aidou:爱豆支付; szf:神州付;alipay:支付宝;xmobo:掌中付</td>
+        </tr>
+        <tr>
+          <td class="color_primary">gameId</td>
+          <td class="color_success">int</td>
+          <td>游戏编号</td>
+        </tr>
+        <tr>
+          <td class="color_primary">requestTime</td>
+          <td class="color_success">String</td>
+          <td>请求时间：yyyy-MM-dd HH:mm:ss</td>
+        </tr>
+        <tr>
+          <td class="color_primary">responseTime</td>
+          <td class="color_success">String</td>
+          <td>反馈时间：yyyy-MM-dd HH:mm:ss</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>2.结果通知异常情况处理：</p>
+    <p>如果通知合作方网游服务器异常并且是订购成功情况下，会再次通知网游接口服务器。重试机制视平台压力与闲置资源动态调整，当前默认5次。</p>
+    <p>3.CP服务器返回值</p>
+    <pre><code>
+    //HTTP HEAD 报文
+    HTTP/1.1 200 OK
+	Content-Type: text/html
+	serialno: 此处为回调中的serialno参数
+    </code></pre>
+    <p>代码示例参考4.1.3</p>
+    <p>是否回调成功的判定标准为，HTTP返回状态是否为200，以及CP将自定义参数在HTTP头中返回，则表示网游服务器成功接收，将终止回调。其他情况（如：404，500 等错误状态或没有在HTTP头中返回cpparam）会继续回调。</p>
+    <p class="alert alert-danger"><strong>为防止伪造回调请求，请在Web服务器上限定受信任IP地址为202.102.39.*</strong></p>
+    <div class="alert alert-danger">
+    	<strong>接收计费回执注意事项<br>
+    回调表示平台给CP通知支付结果，收到回调并不代表支付成功。收到回调后，请判断resultCode值为00（短代）或120（第三方）时才表示支付成功，这时才能为用户下发道具，得到其他值，则表示支付不成功，不能为用户下发道具。</strong><br>
+    </div>
+    <h2 id="Section5">五、计费SDK嵌入过程</h2>
+    <h3 id="Title5_1">5.1.放置资源文件</h3>
+    <p>将从商务平台上获取到的“feeInfo.dat”文件放入Android项目中的assets文件夹内。</p>
+    <p class="alert alert-warning"><strong>注意！本平台产品和渠道产品使用不同的feeinfo.dat</strong></p>
+    <p>复制SDK包中的assets、lib目录下的文件到Android工程项目中对应的目录中。</p>
+    <p>复制SDK包中的res目录下的drawable、drawable-hdpi、layout子目录下的文件到Android工程项目中对应的目录中。</p>
+    <p>复制SDK包中的res目录下values子目录下styles_egame.xml文件到到Android工程项目中对应的目录中。</p>
+    <p>打开SDK包中的res目录下values子目录下strings.xml文件，将&lt;resource&gt;&lt;/resource&gt;之间的键值复制追加到Android工程项目中res/values/string.xml文件中。</p>
+    <h3 id="Title5_2">5.2.配置AndroidManifest.xml</h3>
+    <p>在AndroidManifest.xml文件中增加以下权限的申明，并添加Activity申明。</p>    
+    <pre><code class="xml">
+    &lt;uses-permission android:name=&quot;android.permission.READ_PHONE_STATE&quot; /&gt;
+    &lt;uses-permission android:name=&quot;android.permission.INTERNET&quot; /&gt;
+    &lt;uses-permission android:name=&quot;android.permission.SEND_SMS&quot; /&gt;
+    &lt;uses-permission android:name=&quot;android.permission.ACCESS_NETWORK_STATE&quot; /&gt;
+    &lt;uses-permission android:name=&quot;android.permission.ACCESS_WIFI_STATE&quot; /&gt;
+    &lt;uses-permission android:name=&quot;android.permission.ACCESS_NETWORK_STATE&quot; /&gt;
+    &lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot; /&gt;
+    
+    &lt;activity
+      android:name=&quot;cn.egame.terminal.paysdk.EgamePayActivity&quot;
+      android:theme=&quot;@android:style/Theme.Translucent.NoTitleBar.Fullscreen&quot;&gt;
+	&lt;/activity
+    </code></pre>
+    <h4>在AndroidManifest.xml文件中增加渠道号</h4>
+      <p class="alert alert-warning"><strong>仅外放游戏使用，本平台游戏切勿添加任何渠道号，请在配置文件中注释或直接去掉以下代码。</strong></p>
+      <pre><code class="xml">&lt;meta-data android:name=&quot;EGAME_CHANNEL&quot; android:value=&quot;8001001&quot;  /&gt;</code></pre>
+      <h4>关于支付二次确认</h4>
+      <p>如本平台需要添加二次确认，请添加“EGAME_CONFIRM”标签，并将值改为“true”。</p>
+      <p>如渠道包需要添加二次确认，请添加“CHANNEL_CONFIRM”标签，并将值改为“true”。</p>
+      <p>如分省产品需要添加二次确认，请添加“PROVINCE_CONFIRM”标签，并将值改为“true”。</p>
+      <p>SDK默认为一次确认。如无要求，配置文件中不需要写。</p>
+      <pre><code class="xml">
+      &lt;meta-data android:name=&quot;EGAME_CONFIRM&quot; android:value=&quot;true&quot;/&gt;
+      &lt;meta-data android:name=&quot;CHANNEL_CONFIRM&quot; android:value=&quot;true&quot;/&gt;
+      &lt;meta-data android:name=&quot;PROVINCE_CONFIRM&quot; android:value=&quot;true&quot;/&gt;
+      </code></pre>
+      <p>一次确认图例：</p>
+      <p class="text-center"><img src="sdk_online/t5_2_confirm1.jpg" width="389" height="341"></p>
+      <p>二次确认图例</p>
+      <p class="text-center"><img src="sdk_online/t5_2_confirm2_1.jpg" width="407" height="340"><img src="sdk_online/t5_2_confirm2_2.jpg" width="409" height="340"></p>
+    <h3 id="Title5_3">5.3.调用支付方法</h3>
+    <pre><code class="java">
+    Activity thisActivity;
+	Button button1, button2;
+	int fee;
+	String serialNo;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		thisActivity = this;
+
+		button1 = (Button) findViewById(R.id.button1);
+		button2 = (Button) findViewById(R.id.button2);
+		
+		button1.setOnClickListener(button1_OnClickListener);
+		button2.setOnClickListener(button2_OnClickListener);
+	}
+
+	private OnClickListener button1_OnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			fee = 1;// 支付金额1元钱。
+			serialNo = "20131206dulf430230";// 交易号最长32位长度。
+			EgameFee.payBySms(thisActivity, fee, serialNo, true,
+					feeResultListener);
+		}
+	};
+
+	private OnClickListener button2_OnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			fee = 1;// 支付金额1元钱。
+			serialNo = "20131206dulf430232";// 交易号最长32位长度。
+			EgameFee.pay(thisActivity, fee, serialNo, feeResultListener);
+
+		}
+	};
+
+	private EgameFeeResultListener feeResultListener = new EgameFeeResultListener() {
+		@Override
+		public void egameFeeSucceed(String arg0, int arg1, String arg2) {
+			// TODO Auto-generated method stub
+			Toast.makeText(thisActivity, "计费请求发送成功", Toast.LENGTH_LONG).show();
+		}
+
+		@Override
+		public void egameFeeFailed(int arg0) {
+			Toast.makeText(thisActivity, "计费请求发送失败", Toast.LENGTH_LONG).show();
+
+		}
+
+		@Override
+		public void egameFeeCancel() {
+			Toast.makeText(thisActivity, "计费请求已取消", Toast.LENGTH_LONG).show();
+
+		}
+	};
+    </code></pre>
+    <h2 id="Section6">六、常见问题 </h2>
+    <h3 id="Title6_1">6.1.代码混淆配置</h3>
+    <pre><code class="ini">
+    -optimizationpasses 5
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+-verbose
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+-ignorewarnings
+-allowaccessmodification
+
+-libraryjars libs/egame.terminal.szpay.jar
+-dontwarn cn.egame.terminal.szpay.**
+-keep class cn.egame.terminal.szpay.**{*;}
+
+
+-libraryjars libs/smspayforonlinegame.jar
+#-libraryjars libs/smspayforegame.jar
+-dontwarn cn.egame.terminal.smspay.**
+-keep class cn.egame.terminal.smspay.**{*;}
+-keep class egame.terminal.jni.protocal.**{*;}
+
+
+-libraryjars libs/egame.terminal.alipay.jar
+-dontwarn cn.egame.terminal.alipay.**
+-keep class cn.egame.terminal.alipay.**{*;}
+
+
+-libraryjars libs/alipay_plugin.jar
+-dontwarn com.alipay.android.app.**
+-keep class com.alipay.android.app.**{*;}
+
+
+-libraryjars libs/egameforonlinegame.jar
+-dontwarn cn.egame.terminal.egameforonlinegame.**
+-keep class cn.egame.terminal.egameforonlinegame.**{*;}
+
+-keepclasseswithmembernames class * {
+	native &lt;methods&gt;;
+}
+
+    </code></pre>
+    <h3 id="Title6_2">6.2.短代回调地址新旧兼容解决方案</h3>
+    <p>旧版短代与新版短代格式不兼容，但在平台中仍然识别为一个短代回调地址，因此，CP服务器接收回调后必须判断来自新版格式还是旧版格式，所幸的是，新版SDK提供了更多的参数，可以先Request一些新版SDK中的参数（如cost,payType,cpparam），如果没有获取到，则为旧版格式，使用旧版的格式进行解析，否则使用新版格式解析参数。</p>
+    <pre><code class="C#">
+    string ResultCode, SerialNo, ResultMsg, Cost, PayType, ValidateCode, RequestTime;
+
+    protected void Page_Load(object sender, EventArgs e) {
+        PayType = Request.QueryString["payType"];
+      if (string.IsNullOrEmpty(PayType) || PayType != "isagSmsPay") {
+          //没有获取到新版参数，跳转到旧版API处理。
+          Server.Transfer("SMSCallback_Old.aspx", true);
+          return;
+      }
+      ResultCode = Request.QueryString["resultCode"];
+SerialNo = Request.QueryString["serialno"];
+        Response.AddHeader("serialno", SerialNo);
+        Response.Write("ResultCode:" + ResultCode + "<br />CpParam:" + SerialNo);
+
+    }
+    </code></pre>
+    <h2 id="Codicil">附录</h2>
+    <h3 id="Codicil1">各支付方法计费限额</h3>
+    <table border="0" cellspacing="0" cellpadding="0" class="table table-striped" style="width:400px;">
+      <thead>
+        <tr style="background-color:#e5edfa; font-weight:bold;">
+          <td width="100">支付方式</td>
+          <td width="300">支付限额</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="color_primary">短信支付</td>
+          <td>1-20元</td>
+        </tr>
+        <tr>
+          <td class="color_primary">移动充值卡</td>
+          <td>1-500元</td>
+        </tr>
+        <tr>
+          <td class="color_primary">电信充值卡</td>
+          <td>1-100元</td>
+        </tr>
+        <tr>
+          <td class="color_primary">联通充值卡</td>
+          <td>1-500元</td>
+        </tr>
+        <tr>
+          <td class="color_primary">支付宝</td>
+          <td>1-10000元（具体视银行卡是否支持）</td>
+        </tr>
+        <tr>
+          <td class="color_primary">掌中付</td>
+          <td>1-10000元（具体视银行卡是否支持）</td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 id="Codicil2">计费错误代码说明</h3>
+    <table class="table table-hover table-bordered" style="width:600px;">
+      	<thead>
+        <tr style="background-color:#e5edfa; font-weight:bold;">
+          <td width="200" class="text-center"><strong>错误代码 </strong></td>
+          <td width="400" class="text-center"><strong>错误描述 </strong></td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td class="text-center">-100</td>
+          <td>Activity对象为空</td>
+        </tr>
+        <tr>
+          <td class="text-center">-101</td>
+          <td>feeInfo.dat计费文件未找到或者数据读取异常</td>
+        </tr>
+        <tr>
+          <td class="text-center">-102</td>
+          <td>无法读取当前应用信息</td>
+        </tr>
+        <tr>
+          <td class="text-center">-103</td>
+          <td>应用校验失败，申报信息和当前产品不一致</td>
+        </tr>
+        <tr>
+          <td class="text-center">-104</td>
+          <td>非电信用户</td>
+        </tr>
+        <tr>
+          <td class="text-center">-105</td>
+          <td>单机：道具别名错误</td>
+        </tr>
+        <tr>
+          <td class="text-center">-200</td>
+          <td>初始化失败，无法进行计费</td>
+        </tr>
+        <tr>
+          <td class="text-center">-201</td>
+          <td>计费回调对象为空</td>
+        </tr>
+        <tr>
+          <td class="text-center">-202</td>
+          <td>计费道具别名错误</td>
+        </tr>
+        <tr>
+          <td class="text-center">-203</td>
+          <td>渠道ID数据异常</td>
+        </tr>
+        <tr>
+          <td class="text-center">-204</td>
+          <td>SERVICE_CODE数据异常</td>
+        </tr>
+        <tr>
+          <td class="text-center">-205</td>
+          <td>自定义参数格式异常</td>
+        </tr>
+        <tr>
+          <td class="text-center">-206</td>
+          <td>计费方法调用过快</td>
+        </tr>
+        <tr>
+          <td class="text-center">-207</td>
+          <td>计费短信发送失败</td>
+        </tr>
+        </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

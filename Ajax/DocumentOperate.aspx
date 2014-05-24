@@ -64,11 +64,11 @@
             DB.SQLFiltrate(ref Content);
             DB.SQLFiltrate(ref LinkUrl);
             if (Action == "ADDNEW") {
-                SQL = "INSERT INTO DocumentList (ClassId,Title,ContentText,LinkUrl,AddUserId) VALUES ("+ClassId+",'"
-                    + Title + "','" + Content + "','" + LinkUrl + "'," + Session["UserId"].ToString() + ")";
+                SQL = "INSERT INTO DocumentList (ClassId,Title,ContentText,LinkUrl,AddUserId,LastEditUserId) VALUES ("+ClassId+",'"
+                    + Title + "','" + Content + "','" + LinkUrl + "'," + Session["UserId"].ToString() + "," + Session["UserId"].ToString() + ")";
             } else if (Action == "UPDATE") {
                 SQL = "UPDATE DocumentList SET Title='" + Title + "',ContentText='" + Content + "',LinkUrl='" + LinkUrl + "',"
-                    + "LastEditUserId=" + Session["UserId"].ToString() + " WHERE Id=" + Id;
+                    + "LastEditUserId=" + Session["UserId"].ToString() + ",LastEditTime=GETDATE() WHERE Id=" + Id;
             } else {
                 rInfo.ResultCode = 1;
                 rInfo.ResultMessage = "不能识别的指令。";

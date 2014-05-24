@@ -31,7 +31,7 @@
     </script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="PageContent" runat="Server">
-    <div class="MainContainer caption text-right" style="padding-right: 30px;"><a href="DocumentEdit.aspx" class="btn btn-primary">发起新咨询</a></div>
+    <div class="MainContainer caption text-right" style="padding-right: 30px;"><a href="DocumentEdit.aspx" class="btn btn-primary">新建文档</a></div>
     <div class="container" id="DataArea">
         
     </div>

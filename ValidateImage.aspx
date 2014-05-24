@@ -16,7 +16,7 @@
                 code = (char)('A' + (char)(number % 26));
             checkCode += code.ToString();
         }
-        Session["CheckCode"] = checkCode;
+        Session["ValidateImageCode"] = checkCode;
 
         Bitmap image = new System.Drawing.Bitmap((int)Math.Ceiling
         ((checkCode.Length * 13.0)), 22);

@@ -1,0 +1,358 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>单机SDK嵌入文档</title>
+<link href="../Bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="../Bootstrap/css/bootstrap-theme-cerulean.min.css" rel="stylesheet" type="text/css">
+<link href="../Css/theme-ui.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="../Scripts/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="../Bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../Scripts/jQuery.Bootstrap.WebUI.js"></script>
+<link href="../highlight/styles/github.css" rel="stylesheet" type="text/css">
+<link href="document.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="../highlight/highlight.pack.js"></script>
+<script type="text/javascript">
+	var scrollTop=0;
+	$(document).ready(function(e) {
+        hljs.initHighlightingOnLoad();
+		
+		$(window).scroll(function(){
+			scrollTop=$(window).scrollTop();
+			if (scrollTop<100) {
+				$("#DocumentLeftPanel").css("top",200);	
+				$("#DocumentTitleContainerSmall").hide();
+				//$("#DocumentTitleContainer").show();
+			}else{
+				$("#DocumentTitleContainerSmall").show();
+				$("#DocumentTitleContainerSmall").css("top",scrollTop);
+				$("#DocumentLeftPanel").css("top",scrollTop+60);
+				//$("#DocumentTitleContainer").hide();
+				//$("#DocumentTitleContainerSmall").show();
+			}
+		});
+    });
+</script>
+</head>
+<body data-spy="scroll" data-target=".DocumentLeftPanel">
+<div id="DocumentTitleContainer" style="display:block;">
+  <div class="container DocumentTitle">
+    <h1 style="font-size:64px; font-weight:bold;">单机SDK嵌入文档</h1>
+    <h3>当前版本：v3.1.1.0，适用于本平台，外放和省渠道外放</h3>
+    <h4 class="text-right"><i>最后更新于 2014-5-14</i></h4>
+  </div>
+</div>
+<div id="DocumentTitleContainerSmall" style="display:none;">
+	<div class="container DocumentTitle">
+        <h3>单机SDK嵌入文档&nbsp;&nbsp;&nbsp;<span class="h4" style="color:#fff;">[当前版本：v3.1.1.0，适用于本平台，外放和省渠道外放]</span>&nbsp;&nbsp;<span class="h5" style="color:#fff"><i>最后更新于 2014-5-20</i></span></h3>
+    </div>
+</div>
+<div class="FullContainer">
+	<div id="DocumentLeftPanel">
+    	<ul class="DocumentDirLv1">
+          <li><a href="#Section1">一、游戏申报</a>
+            <ul class="DocumentDirLv2">
+              <li><a href="#Title1_1">1.1.本平台产品申报</a></li>
+              <li><a href="#Title1_2">1.2.外放产品申报</a></li>
+            </ul>
+          </li>
+          <li><a href="#Section2">二、计费SDK嵌入过程</a>
+            <ul class="DocumentDirLv2">
+              <li><a href="#Title2_1">2.1.放置资源文件</a></li>
+              <li><a href="#Title2_2">2.2.配置AndroidManifest.xml</a></li>
+              <li><a href="#Title2_2_1">渠道号配置</a></li>
+              <li><a href="#Title2_2_2">关于支付二次确认</a></li>
+              <li><a href="#Title2_3">2.3.调用支付方法</a></li>
+            </ul>
+          </li>
+          <li><a href="#Section3">三、常见问题</a>
+<ul class="DocumentDirLv2">
+            	<li><a href="#Title3_1">3.1.关于包名与配置文件不一致问题(-103错误)</a></li>
+            	<li><a href="#Title3_2">3.2.代码混淆配置</a></li>
+            	<li><a href="#Title3_3">3.3.外放游戏查看短信上行渠道号</a></li>
+            </ul>
+          </li>
+          <li><a href="#Codicil">附录</a>
+          <ul class="DocumentDirLv2">
+          	<li><a href="#Codicil1">计费错误代码说明</a></li>
+          </ul>
+          </li>
+        </ul>
+    </div>
+    <div id="DocumentContent">
+    	<h2 id="Section1">一、游戏申报</h2>
+      <h3 id="Title1_1">1.1.本平台产品申报</h3>
+      <p><strong>1.	登录商务合作管理平台，点击左侧 普通单产品-创建产品</strong></p>
+      <div class="text-center"><img src="sdk_offline/t1_1_createproduct.jpg" width="957" height="523"></div>
+      <p><strong>2.	按要求申报产品并上传截图、提交</strong></p>
+      <div class="text-center"><img src="sdk_offline/t1_2_submitinfo.jpg" width="842" height="355"></div>
+      <h3><span class="label label-danger">注意事项</span></h3>
+      <ul>
+        <li> 产品类型请选择“单机游戏”</li>
+        <li> 游戏包名请正确填写，提交后不能修改包名为（工程文件MainActivity.java中的“package=”）</li>
+        <li> 支付类型请选择“根据关卡或道具计费（试玩转激活）” </li>
+        <li> 计费类型选择“短信计费”</li>
+        <li> 道具别名系统会自动生成。</li>
+        <li> 游戏截图请按要求截取上传</li>
+        <li> 游戏ICON图请使用游戏安装后的图标<br>
+        </li>
+      </ul>
+      <p><strong>3.获取配置文件</strong></p>
+      <p>审核通过后，点击左侧 普通单产品-产品管理（厂商），下载系统生成的配置文件，即&ldquo;<span class="color_danger"><strong>feeInfo.dat</strong></span>&rdquo;。</p>
+      <div class="text-center"><img src="sdk_offline/t1_3_getfeeinfo.jpg" width="423" height="368"></div>
+      <h3 id="Title1_2">1.2.外放产品申报</h3>
+      <p>登录商务平台，点击左侧 产品发行（CP）-产品管理-创建产品；其他步骤及注意与本平台单机产品类似。</p>
+      <div class="text-center"><img src="sdk_offline/t1_3_createproduct.jpg" width="960" height="413"></div>
+<p>若没有“产品发行（CP）” 说明暂无发行产品权限，请联系渠道经理申请权限。获得到权限后进入产品发行（CP）- “申请发行”（注：第一次登陆产品发行（CP）中只操作一次）。
+创建产品时，使用原游戏名即可，无需添加[爱游戏]后缀。审核通过后，可通过系统获取配置文件。可参见流程图。</p>
+      <div class="text-center"><img src="sdk_offline/t1_3_registryflow.jpg" width="900" height="636"></div>
+      <div class="alert alert-danger"><p><strong>外放产品包名特别注意事项</strong></p>
+      <p><strong>包名校验注意事项：如果申报时候包名为com.egame.zhijian那么在打渠道外放包的时候包名只要满足如下条件，计费SDK校验就可以通过：包名已com.egame.zhijian开头后面可以包含数字字母和一个点(.)。能通过的包名如下：com.egame.zhijian360，com.egame.zhijian91，com.egame.zhijianaz，com.egame.zhijian.az；</strong></p>
+      <p><strong>不能通过的包名：com.egame.zhijian.az.360</strong></p></div>
+      <h2 id="Section2">二、计费SDK嵌入过程</h2>
+      <h3 id="Title2_1">2.1.放置资源文件</h3>
+      <p>将从商务平台上获取到的“feeInfo.dat”文件放入Android项目中的assets文件夹内。</p>
+      <p class="alert alert-warning"><strong>注意！本平台产品和渠道产品使用不同的feeinfo.dat</strong></p>
+      <div class="text-center"><img src="sdk_offline/t2_1_putfeeinfo.jpg" width="322" height="168"></div>
+      <p>将SDK包中res目录下的资源文件放到Android项目中的res文件夹内。</p>
+      <div class="text-center"><img src="sdk_offline/t2_1_putres.jpg" width="342" height="485"></div>
+      <p>将SDK包中的lib目录下的so文件放到Android项目中的lib文件夹内。</p>
+      <div class="text-center"><img src="sdk_offline/t2_1_putlib.jpg" width="238" height="115"></div>
+      <h3 id="Title2_2">2.2.配置AndroidManifest.xml</h3>
+      <p>在AndroidManifest.xml文件中增加以下两个权限的申明，并添加Activity申明。</p>
+      <pre><code class="xml">
+      &lt;uses-permission android:name=&quot;android.permission.READ_PHONE_STATE&quot; /&gt;
+      &lt;uses-permission android:name=&quot;android.permission.SEND_SMS&quot; /&gt;
+      &lt;activity
+      android:name=&quot;cn.egame.terminal.paysdk.EgamePayActivity&quot;
+      android:theme=&quot;@android:style/Theme.Translucent.NoTitleBar.Fullscreen&quot; &gt;
+      &lt;/activity&gt;
+      </code></pre>
+      <h4 id="Title2_2_1">在AndroidManifest.xml文件中增加渠道号</h4>
+      <p class="alert alert-warning"><strong>仅外放游戏使用，本平台游戏切勿添加任何渠道号，请在配置文件中注释或直接去掉以下代码。</strong></p>
+      <pre><code class="xml">&lt;meta-data android:name=&quot;EGAME_CHANNEL&quot; android:value=&quot;8001001&quot;  /&gt;</code></pre>
+      <h4 id="Title2_2_2">关于支付二次确认</h4>
+      <p>如本平台需要添加二次确认，请添加“EGAME_CONFIRM”标签，并将值改为“true”。</p>
+      <p>如渠道包需要添加二次确认，请添加“CHANNEL_CONFIRM”标签，并将值改为“true”。</p>
+      <p>如分省产品需要添加二次确认，请添加“PROVINCE_CONFIRM”标签，并将值改为“true”。</p>
+      <p>SDK默认为一次确认。如无要求，配置文件中不需要写。</p>
+      <pre><code class="xml"><p>&lt;meta-data android:name=&quot;EGAME_CONFIRM&quot; android:value=&quot;true&quot;/&gt;  </p><p>&lt;meta-data android:name=&quot;CHANNEL_CONFIRM&quot; android:value=&quot;true&quot;/&gt;</p><p>&lt;meta-data android:name=&quot;PROVINCE_CONFIRM&quot; android:value=&quot;true&quot;/</p></code></pre>
+      <p>一次确认图例：</p>
+      <p class="text-center"><img src="sdk_offline/t2_2_confirm1.jpg" width="389" height="341"></p>
+      <p>二次确认图例</p>
+      <p class="text-center"><img src="sdk_offline/t2_2_confirm2_1.jpg" width="407" height="340"><img src="sdk_offline/t2_2_confirm2_2.jpg" width="409" height="340"></p>
+      <h3 id="Title2_3">2.3.调用支付方法</h3>
+      <pre><code class="java">
+    Activity thisActivity;
+    Button payButton1, payButton2;
+    String payAlias = "";
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		thisActivity = this;
+		payButton1 = (Button) findViewById(R.id.button1);
+		payButton1.setOnClickListener(button1_OnClickListener);
+		payButton2 = (Button) findViewById(R.id.button2);
+		payButton2.setOnClickListener(button2_OnClickListener);
+	}
+
+	private OnClickListener button1_OnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			payAlias="108462";
+			//硬计费点，激活游戏，1元，试玩三分钟后弹出
+			EgamePay.pay(thisActivity, payAlias, new EgamePayListener() {
+				@Override
+				public void paySuccess(String alias) {
+					Toast.makeText(thisActivity, "道具(" 
+					+ alias + ")支付成功。",Toast.LENGTH_LONG).show();
+				}
+
+				@Override
+				public void payFailed(String alias, int errorInt) {
+					Toast.makeText(thisActivity, "道具(" 
+					+ alias + ")支付失败：" + errorInt,
+					Toast.LENGTH_LONG).show();
+				}
+
+				@Override
+				public void payCancel(String alias) {
+					Toast.makeText(thisActivity, "道具(" 
+					+ alias + ")支付操作被取消。",
+					Toast.LENGTH_LONG).show();
+				}
+			});
+		}
+	};
+
+	private OnClickListener button2_OnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			payAlias="108463";
+			//软计费点，复活，2元，主角死亡后主动点击
+			EgamePay.pay(thisActivity, payAlias, new EgamePayListener() {
+				@Override
+				public void paySuccess(String alias) {
+					Toast.makeText(thisActivity, "道具(" 
+					+ alias + ")支付成功。",Toast.LENGTH_LONG).show();
+				}
+
+				@Override
+				public void payFailed(String alias, int errorInt) {
+					Toast.makeText(thisActivity, "道具(" 
+					+ alias + ")支付失败：" + errorInt,
+					Toast.LENGTH_LONG).show();
+				}
+
+				@Override
+				public void payCancel(String alias) {
+					Toast.makeText(thisActivity, "道具(" 
+					+ alias + ")支付操作被取消。",
+					Toast.LENGTH_LONG).show();
+				}
+			});
+		}
+	};
+      </code></pre>
+      <p>PayAlias为计费点的道具别名，具体内容在登录平台-产品管理-消费信息中获取。</p>
+      <p class="text-center"><img src="sdk_offline/t2_3_payalias.jpg" width="638" height="269"></p>
+      <h2 id="Section3">三、常见问题</h2>
+      <h3 id="Title3_1">3.1.关于包名与配置文件不一致问题(-103错误)</h3>
+      <p>feeInfo.dat配置文件必须嵌入在指定包名的项目中，如Demo中提供了项目包名为cn.paly.SMSOnline，若CP将Dmo中的feeInfo.dat文件直接覆盖，依然不能运行，必须将Demo项目的包名改为CP在平台中申报的包名才能正确运行。</p>
+      <p>请确保在平台上申报的包名与实际包名一致。如你在平台上申报时，包名填写的是cn.play.abc，却把下载的配置文件feeInfo.dat放在了cn.play.xyz的项目中，在在支付时，SDK会报-103错误。</p>
+      <p>项目中的包名为AndroidManifest.xml文件中的package值。</p>
+      <pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+      &lt;manifest xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+      package=&quot;cn.play.egamesmsoffline&quot;
+      android:versionCode=&quot;1&quot;
+      android:versionName=&quot;1.0&quot; &gt;
+      </code></pre>
+      <h3 id="Title3_2">3.2.代码混淆配置</h3>
+      <pre><code class="ini">
+-optimizationpasses 5
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+-verbose
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+-ignorewarnings
+-allowaccessmodification
+
+-libraryjars libs/egame.terminal.szpay.jar
+-dontwarn cn.egame.terminal.szpay.**
+-keep class cn.egame.terminal.szpay.**{*;}
+
+
+-libraryjars libs/smspayforonlinegame.jar
+#-libraryjars libs/smspayforegame.jar
+-dontwarn cn.egame.terminal.smspay.**
+-keep class cn.egame.terminal.smspay.**{*;}
+-keep class egame.terminal.jni.protocal.**{*;}
+
+
+-libraryjars libs/egame.terminal.alipay.jar
+-dontwarn cn.egame.terminal.alipay.**
+-keep class cn.egame.terminal.alipay.**{*;}
+
+
+-libraryjars libs/alipay_plugin.jar
+-dontwarn com.alipay.android.app.**
+-keep class com.alipay.android.app.**{*;}
+
+
+-libraryjars libs/egameforonlinegame.jar
+-dontwarn cn.egame.terminal.egameforonlinegame.**
+-keep class cn.egame.terminal.egameforonlinegame.**{*;}
+
+-keepclasseswithmembernames class * {
+	native &lt;methods&gt;;
+}
+      </code></pre>
+      <h3 id="Title3_3">3.3.外放游戏查看短信上行渠道号</h3>
+      <ul>
+        <li>安装SKD开发包中的渠道号查看插件。 </li>
+        <li>运行后，按返回键退出前台。 </li>
+        <li>运行外放游戏，弹出计费点 </li>
+        <li>渠道号查看插件会Toast弹出相关信息。</li>
+      </ul>
+      <p class="text-center"><img src="sdk_offline/t3_3_channel.jpg" width="480" height="854"></p>
+      <h2 id="Codicil">附录</h2>
+      <h3 id="Codicil1">计费错误代码说明</h3>
+      <div>
+      <table class="table table-hover table-bordered" style="width:600px;">
+      	<thead>
+        <tr style="background-color:#e5edfa; font-weight:bold;">
+          <td width="200" class="text-center"><strong>错误代码 </strong></td>
+          <td width="400" class="text-center"><strong>错误描述 </strong></td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td class="text-center">-100</td>
+          <td>Activity对象为空</td>
+        </tr>
+        <tr>
+          <td class="text-center">-101</td>
+          <td>feeInfo.dat计费文件未找到或者数据读取异常</td>
+        </tr>
+        <tr>
+          <td class="text-center">-102</td>
+          <td>无法读取当前应用信息</td>
+        </tr>
+        <tr>
+          <td class="text-center">-103</td>
+          <td>应用校验失败，申报信息和当前产品不一致</td>
+        </tr>
+        <tr>
+          <td class="text-center">-104</td>
+          <td>非电信用户</td>
+        </tr>
+        <tr>
+          <td class="text-center">-105</td>
+          <td>单机：道具别名错误</td>
+        </tr>
+        <tr>
+          <td class="text-center">-200</td>
+          <td>初始化失败，无法进行计费</td>
+        </tr>
+        <tr>
+          <td class="text-center">-201</td>
+          <td>计费回调对象为空</td>
+        </tr>
+        <tr>
+          <td class="text-center">-202</td>
+          <td>计费道具别名错误</td>
+        </tr>
+        <tr>
+          <td class="text-center">-203</td>
+          <td>渠道ID数据异常</td>
+        </tr>
+        <tr>
+          <td class="text-center">-204</td>
+          <td>SERVICE_CODE数据异常</td>
+        </tr>
+        <tr>
+          <td class="text-center">-205</td>
+          <td>自定义参数格式异常</td>
+        </tr>
+        <tr>
+          <td class="text-center">-206</td>
+          <td>计费方法调用过快</td>
+        </tr>
+        <tr>
+          <td class="text-center">-207</td>
+          <td>计费短信发送失败</td>
+        </tr>
+        </tbody>
+      </table>
+      </div>
+<p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+      <p>&nbsp;</p>
+    </div>
+</div>
+</body>
+</html>
